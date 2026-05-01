@@ -102,11 +102,10 @@
 }
 
 .hero-section {
-  height: 86svh;
-  max-height: 820px;
-  min-height: 0;
+  min-height: 92svh;
   margin-top: -72px;
   padding-top: 72px;
+  padding-bottom: 42px;
   overflow: hidden;
   background:
     radial-gradient(circle at 82% 25%, rgba(15, 118, 110, 0.18), transparent 32%),
@@ -128,14 +127,15 @@
   position: relative;
   z-index: 3;
   display: flex;
-  align-items: center;
-  min-height: calc(86svh - 72px);
-  max-height: 748px;
+  align-items: flex-start;
+  min-height: calc(92svh - 72px);
+  padding-top: clamp(155px, 22svh, 195px);
+  padding-bottom: 64px;
 }
 
 .hero-copy {
   width: min(660px, 100%);
-  padding: 2.5rem 0;
+  padding: 0;
 }
 
 .eyebrow {
