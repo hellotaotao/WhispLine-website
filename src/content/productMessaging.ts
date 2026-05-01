@@ -47,7 +47,7 @@ export type ProviderDetail = {
 }
 
 export type ProductMessaging = {
-  productName: 'WhispLine'
+  productName: 'SayType'
   currentReality: string
   hero: {
     eyebrow: string
@@ -78,14 +78,14 @@ export type ProductMessaging = {
 }
 
 export const productMessaging: ProductMessaging = {
-  productName: 'WhispLine',
+  productName: 'SayType',
   currentReality:
-    'WhispLine is a desktop voice input prototype with a Tauri-based main build and Electron legacy support. Users configure their own transcription API key.',
+    'SayType is a desktop voice input prototype with a Tauri-based main build and Electron legacy support. Users configure their own transcription API key.',
   hero: {
     eyebrow: 'Desktop voice input for every text field',
-    headline: 'Hold a hotkey, speak, and keep writing where your cursor already is.',
+    headline: 'Don’t type. Say it.',
     subheadline:
-      'WhispLine runs quietly in the menu bar or system tray, records while you hold Ctrl+Shift, sends audio to your chosen AI transcription provider, then inserts the result into the active app.',
+      'SayType runs quietly in the menu bar or system tray, records while you hold Ctrl+Shift, sends audio to your chosen AI transcription provider, then inserts the result into the active app.',
     primaryCta: 'Get the desktop build',
     secondaryCta: 'See the workflow',
     proofPoints: [
@@ -174,7 +174,7 @@ export const productMessaging: ProductMessaging = {
   workflow: [
     {
       label: '01',
-      title: 'Keep WhispLine in the tray',
+      title: 'Keep SayType in the tray',
       description: 'The desktop app stays out of the way in the menu bar or system tray until you need it.',
     },
     {
@@ -190,7 +190,7 @@ export const productMessaging: ProductMessaging = {
     {
       label: '04',
       title: 'Release to transcribe',
-      description: 'WhispLine stops recording on release and sends the audio to the configured Groq or OpenAI model.',
+      description: 'SayType stops recording on release and sends the audio to the configured Groq or OpenAI model.',
     },
     {
       label: '05',
@@ -233,13 +233,13 @@ export const productMessaging: ProductMessaging = {
     {
       id: 'quiet-background',
       title: 'Quiet background operation',
-      description: 'WhispLine runs from the tray, supports auto launch, and exposes settings only when needed.',
+      description: 'SayType runs from the tray, supports auto launch, and exposes settings only when needed.',
     },
   ],
   permissions: [
     {
       title: 'User-owned API keys',
-      description: 'WhispLine expects the user to configure a Groq or OpenAI API key in desktop settings.',
+      description: 'SayType expects the user to configure a Groq or OpenAI API key in desktop settings.',
     },
     {
       title: 'Microphone access',
@@ -253,7 +253,7 @@ export const productMessaging: ProductMessaging = {
     {
       title: 'Clipboard fallback',
       description:
-        'When direct insertion or Accessibility permission is unavailable, WhispLine can copy the transcript to the clipboard for paste.',
+        'When direct insertion or Accessibility permission is unavailable, SayType can copy the transcript to the clipboard for paste.',
     },
   ],
   platforms: [
@@ -295,7 +295,7 @@ export const productMessaging: ProductMessaging = {
   cta: {
     headline: 'Voice input that follows your desktop workflow.',
     description:
-      'Use WhispLine when typing becomes the bottleneck: comments, tickets, docs, replies, notes, and multilingual work across the apps you already use.',
+      'Use SayType when typing becomes the bottleneck: comments, tickets, docs, replies, notes, and multilingual work across the apps you already use.',
     note: 'Current prototype: desktop app, user-configured API key, microphone access required, macOS Accessibility permission required for full automatic insertion.',
   },
 }

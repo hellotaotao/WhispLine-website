@@ -4,8 +4,8 @@ import { productMessaging } from './productMessaging'
 const serializedMessaging = JSON.stringify(productMessaging).toLowerCase()
 
 describe('productMessaging', () => {
-  it('names WhispLine consistently and describes the current desktop reality', () => {
-    expect(productMessaging.productName).toBe('WhispLine')
+  it('names SayType consistently and describes the current desktop reality', () => {
+    expect(productMessaging.productName).toBe('SayType')
     expect(productMessaging.currentReality).toContain('Tauri')
     expect(productMessaging.currentReality).toContain('Electron legacy support')
     expect(productMessaging.currentReality).toContain('API key')

@@ -1,12 +1,12 @@
-# WhispLine Website
+# SayType Website
 
-Product marketing homepage for WhispLine, a desktop voice input method for macOS, Windows, and Linux.
+Product marketing homepage for SayType, a desktop voice input method for macOS, Windows, and Linux.
 
-The page is based on the real app in `../WhispLine`: a Tauri-based desktop prototype with Electron legacy support, a global hold-to-record hotkey, AI transcription via Groq or OpenAI, tray/menu bar operation, an input prompt waveform, and OS-specific permission and insertion behavior.
+The page is based on the real app in `../WhispLine` (old repo folder name kept for now): a Tauri-based desktop prototype with Electron legacy support, a global hold-to-record hotkey, AI transcription via Groq or OpenAI, tray/menu bar operation, an input prompt waveform, and OS-specific permission and insertion behavior.
 
 ## Product Message
 
-WhispLine lets users hold `Ctrl+Shift`, speak into any active desktop app, release to transcribe, and insert the resulting text where the cursor already is. `Escape` cancels active recording or transcription.
+SayType lets users hold `Ctrl+Shift`, speak into any active desktop app, release to transcribe, and insert the resulting text where the cursor already is. `Escape` cancels active recording or transcription.
 
 The site is intentionally honest about the prototype:
 

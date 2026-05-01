@@ -38,7 +38,7 @@ function App() {
 function SiteHeader() {
   return (
     <header className="site-header" aria-label="Primary navigation">
-      <a className="brand-lockup" href="#top" aria-label="WhispLine home">
+      <a className="brand-lockup" href="#top" aria-label="SayType home">
         <span className="brand-mark" aria-hidden="true">
           <span />
           <span />
@@ -92,7 +92,7 @@ function HeroBackdrop() {
           <span />
           <span />
           <span />
-          <strong>WhispLine active</strong>
+          <strong>SayType active</strong>
         </div>
         <div className="desktop-grid">
           <div className="editor-pane">
@@ -142,12 +142,12 @@ function ProductPreviewSection() {
           <p className="eyebrow">Product preview</p>
           <h2 id="preview-title">A desktop input method, not another writing box.</h2>
           <p>
-            WhispLine is designed around the active app: it records from a global shortcut,
+            SayType is designed around the active app: it records from a global shortcut,
             visualizes your voice in a compact prompt, and returns text to the field that
             already has focus.
           </p>
         </div>
-        <div className="product-stage" aria-label="WhispLine product interface mockup">
+        <div className="product-stage" aria-label="SayType product interface mockup">
           <div className="app-stack">
             <div className="mock-window mock-window-editor">
               <div className="mock-titlebar">
@@ -179,7 +179,7 @@ function ProductPreviewSection() {
             </div>
 
             <div className="mock-window mock-window-settings">
-              <div className="mini-heading">WhispLine settings</div>
+              <div className="mini-heading">SayType settings</div>
               <div className="settings-list">
                 <div>
                   <span>Provider</span>
@@ -205,7 +205,7 @@ function ProductPreviewSection() {
             <p>{currentReality}</p>
             <p>
               macOS needs microphone and Accessibility permission for the full automatic
-              workflow. When direct insertion is unavailable, WhispLine falls back to the
+              workflow. When direct insertion is unavailable, SayType falls back to the
               clipboard so the transcript is still ready to paste.
             </p>
           </aside>
@@ -295,7 +295,7 @@ function PrivacySection() {
           <p className="eyebrow">Privacy and permissions</p>
           <h2 id="privacy-title">Honest controls for a desktop prototype.</h2>
           <p>
-            WhispLine is explicit about what it needs. Audio transcription runs through
+            SayType is explicit about what it needs. Audio transcription runs through
             the provider configured by the user, and OS permissions are requested only
             for the desktop workflow.
           </p>
@@ -345,7 +345,7 @@ function ProvidersSection() {
           <p className="eyebrow">Transcription providers</p>
           <h2 id="providers-title">Bring your own AI transcription key.</h2>
           <p>
-            WhispLine keeps model choice in settings, so users can tune speed, cost,
+            SayType keeps model choice in settings, so users can tune speed, cost,
             and quality for their own workflow.
           </p>
         </div>
