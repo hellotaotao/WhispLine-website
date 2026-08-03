@@ -41,7 +41,7 @@ export type PlatformDetail = {
 }
 
 export type ProviderDetail = {
-  name: 'Groq' | 'OpenAI'
+  name: 'Local Qwen3' | 'Groq' | 'OpenAI'
   models: string[]
   note: string
 }
@@ -80,19 +80,19 @@ export type ProductMessaging = {
 export const productMessaging: ProductMessaging = {
   productName: 'SayType',
   currentReality:
-    'SayType is a desktop voice input prototype with a Tauri-based main build and Electron legacy support. Users configure their own transcription API key.',
+    'SayType is a Tauri desktop voice input app. On Apple Silicon Macs it can run Qwen3 transcription locally after a one-time model download; Groq and OpenAI remain optional cloud engines using your own key.',
   hero: {
     eyebrow: 'Desktop voice input for every text field',
     headline: 'Don’t type. Say it.',
     subheadline:
-      'SayType runs quietly in the menu bar or system tray, records while you hold Ctrl+Shift, sends audio to your chosen AI transcription provider, then inserts the result into the active app.',
+      'Hold Ctrl+Shift, speak, release. SayType transcribes locally on your Mac or through a cloud engine you choose, then returns text to the app already under your cursor.',
     primaryCta: 'Get the desktop build',
     secondaryCta: 'See the workflow',
     proofPoints: [
       'Hold Ctrl+Shift to record',
       'Release to transcribe',
       'Escape cancels recording or transcription',
-      'Clipboard fallback when direct insertion is unavailable',
+      'Local Qwen3 mode keeps audio on your Mac',
     ],
   },
   targetUsers: [
@@ -152,8 +152,8 @@ export const productMessaging: ProductMessaging = {
   valueMappings: [
     {
       painPointId: 'native-dictation',
-      featureId: 'provider-choice',
-      value: 'Use Groq Whisper or OpenAI transcription models instead of relying on built-in dictation quality.',
+      featureId: 'engine-choice',
+      value: 'Choose private local transcription or your own Groq/OpenAI account without changing how you dictate.',
     },
     {
       painPointId: 'fragmented-voice',
@@ -167,8 +167,8 @@ export const productMessaging: ProductMessaging = {
     },
     {
       painPointId: 'browser-tools',
-      featureId: 'desktop-fallback',
-      value: 'Direct insertion is used where available, with clipboard insertion as a fallback.',
+      featureId: 'history',
+      value: 'Every completed transcript is kept in History, where it can be copied manually if insertion needs attention.',
     },
   ],
   workflow: [
@@ -190,13 +190,13 @@ export const productMessaging: ProductMessaging = {
     {
       label: '04',
       title: 'Release to transcribe',
-      description: 'SayType stops recording on release and sends the audio to the configured Groq or OpenAI model.',
+      description: 'SayType stops recording on release and transcribes with your selected local or cloud engine. Local mode shows progress as text arrives.',
     },
     {
       label: '05',
       title: 'Text appears in place',
       description:
-        'The transcript is inserted into the active app when possible, or copied to the clipboard when a fallback is needed.',
+        'On macOS, SayType inserts the transcript into the active app. If an app blocks insertion, the completed text remains available in History to copy.',
     },
     {
       label: '06',
@@ -221,25 +221,30 @@ export const productMessaging: ProductMessaging = {
       description: 'A small always-on-top prompt confirms recording state with real-time audio visualization.',
     },
     {
-      id: 'provider-choice',
-      title: 'Configurable AI transcription',
-      description: 'Choose Groq or OpenAI, select a model, and keep API keys under your own account.',
+      id: 'engine-choice',
+      title: 'Local-first engine choice',
+      description: 'Apple Silicon Macs can run Qwen3-ASR locally after a ~1 GB one-time download. Or connect your own Groq or OpenAI key.',
     },
     {
-      id: 'desktop-fallback',
-      title: 'Direct insertion plus clipboard fallback',
-      description: 'macOS uses CGEvent direct insertion where permissions allow; clipboard fallback keeps the text available.',
+      id: 'microphone-choice',
+      title: 'Choose the microphone that works for you',
+      description: 'Select a microphone from Settings or the tray. If a saved device is unavailable, SayType safely uses the system default until it returns.',
     },
     {
       id: 'quiet-background',
       title: 'Quiet background operation',
-      description: 'SayType runs from the tray, supports auto launch, and exposes settings only when needed.',
+      description: 'SayType runs from the tray, supports auto launch, and downloads verified updates in the background for you to install when ready.',
+    },
+    {
+      id: 'history',
+      title: 'History and manual copy',
+      description: 'Completed transcriptions are saved locally in History, so you can review and copy a result whenever you need it.',
     },
   ],
   permissions: [
     {
-      title: 'User-owned API keys',
-      description: 'SayType expects the user to configure a Groq or OpenAI API key in desktop settings.',
+      title: 'Local mode or your own cloud key',
+      description: 'Local Qwen3 mode needs no account or API key. Cloud mode sends audio directly to the Groq or OpenAI account you configure.',
     },
     {
       title: 'Microphone access',
@@ -251,29 +256,34 @@ export const productMessaging: ProductMessaging = {
         'macOS requires Accessibility permission for global hotkeys and full automatic insertion into other apps.',
     },
     {
-      title: 'Clipboard fallback',
+      title: 'Your audio stays local in local mode',
       description:
-        'When direct insertion or Accessibility permission is unavailable, SayType can copy the transcript to the clipboard for paste.',
+        'Qwen3-ASR runs on your machine after its one-time download. SayType has no server in the middle; cloud mode is an explicit choice.',
     },
   ],
   platforms: [
     {
       name: 'macOS',
       status: 'Primary desktop path',
-      detail: 'Tauri build, menu bar operation, microphone permission, Accessibility permission, CGEvent insertion, and clipboard fallback.',
+      detail: 'The primary, tested path: menu bar operation, local Qwen3 on Apple Silicon, microphone selection, Accessibility permission, and CGEvent-based automatic text insertion.',
     },
     {
       name: 'Windows',
-      status: 'Platform packaging path',
-      detail: 'Windows build targets exist, with desktop hotkey and insertion behavior handled through platform-specific code paths and fallback behavior.',
+      status: 'Experimental',
+      detail: 'A build target and native insertion path exist, but it has not received the same real-world validation as macOS.',
     },
     {
       name: 'Linux',
-      status: 'Platform packaging path',
-      detail: 'Linux build targets exist, with desktop tray operation and fallback-oriented insertion behavior.',
+      status: 'Experimental',
+      detail: 'A build target exists, but desktop integration and insertion behaviour are still experimental.',
     },
   ],
   providers: [
+    {
+      name: 'Local Qwen3',
+      models: ['Qwen3-ASR-0.6B Q8_0', '~1 GB one-time download'],
+      note: 'Recommended on Apple Silicon Macs. No account or API key; audio stays on your machine. Translation still uses a configured cloud engine.',
+    },
     {
       name: 'Groq',
       models: ['whisper-large-v3', 'whisper-large-v3-turbo'],
@@ -293,9 +303,9 @@ export const productMessaging: ProductMessaging = {
       'The regression is probably in the new permission flow. I am going to add a retry around the accessibility recheck and update the release notes.',
   },
   cta: {
-    headline: 'Voice input that follows your desktop workflow.',
+    headline: 'A faster way to write, without sending every thought to the cloud.',
     description:
       'Use SayType when typing becomes the bottleneck: comments, tickets, docs, replies, notes, and multilingual work across the apps you already use.',
-    note: 'Current prototype: desktop app, user-configured API key, microphone access required, macOS Accessibility permission required for full automatic insertion.',
+    note: 'macOS is the primary path. Local mode needs an Apple Silicon Mac and a ~1 GB model download; microphone access and macOS Accessibility permission are required for the full voice-typing workflow.',
   },
 }

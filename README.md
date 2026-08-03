@@ -1,8 +1,8 @@
 # SayType Website
 
-Product marketing homepage for SayType, a desktop voice input method for macOS, Windows, and Linux.
+Product marketing homepage for SayType, a local-first desktop voice input method. macOS is the primary, tested path; Windows and Linux remain experimental.
 
-The page is based on the real app in `../WhispLine` (old repo folder name kept for now): a Tauri-based desktop prototype with Electron legacy support, a global hold-to-record hotkey, AI transcription via Groq or OpenAI, tray/menu bar operation, an input prompt waveform, and OS-specific permission and insertion behavior.
+The page is based on the real app in `../SayType`: a Tauri desktop app with a global hold-to-record hotkey, local Qwen3-ASR transcription or optional Groq/OpenAI cloud transcription, tray/menu bar operation, microphone selection, an input prompt waveform, local history, automatic updates, and macOS-specific insertion behaviour.
 
 ## Product Message
 
@@ -10,12 +10,13 @@ SayType lets users hold `Ctrl+Shift`, speak into any active desktop app, release
 
 The site is intentionally honest about the prototype:
 
-- Users configure their own Groq or OpenAI API key.
+- On Apple Silicon Macs, Qwen3-ASR runs locally after a ~1 GB one-time download; no account or API key is needed and audio stays on the machine.
+- Cloud mode uses the user's own Groq or OpenAI API key.
 - Microphone permission is required for voice capture.
 - macOS Accessibility permission is required for global hotkeys and full automatic insertion.
 - macOS direct insertion uses CGEvent when available.
-- Clipboard fallback is available when direct insertion or permission-based insertion is unavailable.
-- Cross-platform packaging is positioned for macOS, Windows, and Linux.
+- When macOS automatic insertion cannot complete, the transcription remains in local History for manual copy.
+- Windows and Linux build targets exist but are explicitly marked experimental.
 
 ## Implementation
 

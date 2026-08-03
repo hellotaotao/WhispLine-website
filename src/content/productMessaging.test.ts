@@ -7,8 +7,8 @@ describe('productMessaging', () => {
   it('names SayType consistently and describes the current desktop reality', () => {
     expect(productMessaging.productName).toBe('SayType')
     expect(productMessaging.currentReality).toContain('Tauri')
-    expect(productMessaging.currentReality).toContain('Electron legacy support')
-    expect(productMessaging.currentReality).toContain('API key')
+    expect(productMessaging.currentReality).toContain('Qwen3')
+    expect(productMessaging.currentReality).toContain('Groq')
   })
 
   it('covers the intended target users', () => {
@@ -56,13 +56,17 @@ describe('productMessaging', () => {
     expect(serializedMessaging).toContain('active app')
     expect(serializedMessaging).toContain('cursor')
     expect(serializedMessaging).toContain('waveform')
-    expect(serializedMessaging).toContain('clipboard fallback')
+    expect(serializedMessaging).toContain('local qwen3')
+    expect(serializedMessaging).toContain('history')
+    expect(serializedMessaging).not.toContain('clipboard fallback')
   })
 
   it('keeps provider and model details aligned with the app settings', () => {
+    const local = productMessaging.providers.find((provider) => provider.name === 'Local Qwen3')
     const groq = productMessaging.providers.find((provider) => provider.name === 'Groq')
     const openai = productMessaging.providers.find((provider) => provider.name === 'OpenAI')
 
+    expect(local?.models).toEqual(['Qwen3-ASR-0.6B Q8_0', '~1 GB one-time download'])
     expect(groq?.models).toEqual(['whisper-large-v3', 'whisper-large-v3-turbo'])
     expect(openai?.models).toEqual([
       'whisper-1',
@@ -71,7 +75,7 @@ describe('productMessaging', () => {
     ])
   })
 
-  it('is explicit about platforms, permissions, and fallback behavior', () => {
+  it('is explicit about platforms, permissions, and the local-first privacy boundary', () => {
     expect(productMessaging.platforms.map((platform) => platform.name)).toEqual([
       'macOS',
       'Windows',
@@ -80,7 +84,8 @@ describe('productMessaging', () => {
     expect(serializedMessaging).toContain('microphone')
     expect(serializedMessaging).toContain('accessibility')
     expect(serializedMessaging).toContain('cgevent')
-    expect(serializedMessaging).toContain('clipboard')
+    expect(serializedMessaging).toContain('apple silicon')
+    expect(serializedMessaging).toContain('audio stays on your machine')
     expect(serializedMessaging).toContain('api key')
   })
 })

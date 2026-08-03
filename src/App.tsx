@@ -17,6 +17,8 @@ const {
   cta,
 } = productMessaging
 
+const releaseUrl = 'https://github.com/hellotaotao/saytype/releases/latest'
+
 function App() {
   return (
     <main className="site-shell">
@@ -66,7 +68,7 @@ function HeroSection() {
           <p className="hero-headline">{hero.headline}</p>
           <p className="hero-subheadline">{hero.subheadline}</p>
           <div className="hero-actions" aria-label="Primary actions">
-            <a className="button button-primary" href="#cta">
+            <a className="button button-primary" href={releaseUrl}>
               {hero.primaryCta}
             </a>
             <a className="button button-secondary" href="#workflow">
@@ -109,11 +111,11 @@ function HeroBackdrop() {
             <div className="pane-label">Settings</div>
             <div className="setting-row">
               <span>Provider</span>
-              <strong>OpenAI</strong>
+              <strong>Local Qwen3</strong>
             </div>
             <div className="setting-row">
               <span>Model</span>
-              <strong>gpt-4o-mini-transcribe</strong>
+              <strong>On this Mac</strong>
             </div>
             <div className="setting-row">
               <span>Shortcut</span>
@@ -183,7 +185,7 @@ function ProductPreviewSection() {
               <div className="settings-list">
                 <div>
                   <span>Provider</span>
-                  <strong>OpenAI or Groq</strong>
+                  <strong>Local Qwen3</strong>
                 </div>
                 <div>
                   <span>Microphone</span>
@@ -204,9 +206,9 @@ function ProductPreviewSection() {
             <p className="mini-heading">Current prototype reality</p>
             <p>{currentReality}</p>
             <p>
-              macOS needs microphone and Accessibility permission for the full automatic
-              workflow. When direct insertion is unavailable, SayType falls back to the
-              clipboard so the transcript is still ready to paste.
+              On macOS, microphone and Accessibility permission enable the full automatic
+              workflow. If an app blocks insertion, the completed transcription is retained
+              in local History for you to copy.
             </p>
           </aside>
         </div>
@@ -295,9 +297,9 @@ function PrivacySection() {
           <p className="eyebrow">Privacy and permissions</p>
           <h2 id="privacy-title">Honest controls for a desktop prototype.</h2>
           <p>
-            SayType is explicit about what it needs. Audio transcription runs through
-            the provider configured by the user, and OS permissions are requested only
-            for the desktop workflow.
+            SayType is explicit about what it needs. Local mode keeps audio on this Mac;
+            cloud mode sends audio directly to the provider you configure. OS permissions
+            are requested only for the desktop workflow.
           </p>
         </div>
         <div className="permission-list">
@@ -318,8 +320,8 @@ function PlatformSection() {
     <section className="section-band platform-section" aria-labelledby="platform-title">
       <div className="section-inner">
         <div className="section-heading compact-heading">
-          <p className="eyebrow">Cross-platform direction</p>
-          <h2 id="platform-title">A desktop app with platform-specific packaging.</h2>
+          <p className="eyebrow">Platform status</p>
+          <h2 id="platform-title">Built and tested first for macOS.</h2>
         </div>
         <div className="platform-grid">
           {platforms.map((platform) => (
@@ -342,11 +344,12 @@ function ProvidersSection() {
     <section className="section-band providers-section" id="providers" aria-labelledby="providers-title">
       <div className="section-inner provider-layout">
         <div>
-          <p className="eyebrow">Transcription providers</p>
-          <h2 id="providers-title">Bring your own AI transcription key.</h2>
+          <p className="eyebrow">Transcription engines</p>
+          <h2 id="providers-title">Start local. Switch when your workflow needs it.</h2>
           <p>
-            SayType keeps model choice in settings, so users can tune speed, cost,
-            and quality for their own workflow.
+            Switch engines from the tray or home screen. Apple Silicon Macs surface Local
+            Qwen3 as the recommended option; Groq and OpenAI stay available when you need
+            cloud transcription or translation.
           </p>
         </div>
         <div className="provider-grid">
@@ -426,8 +429,8 @@ function CtaSection() {
         </div>
         <div className="cta-panel">
           <p>{cta.note}</p>
-          <a className="button button-primary" href="#top">
-            Back to top
+          <a className="button button-primary" href={releaseUrl}>
+            View latest release
           </a>
         </div>
       </div>
