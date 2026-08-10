@@ -1,39 +1,51 @@
 import './App.css'
 import { productMessaging } from './content/productMessaging'
 
-const {
-  productName,
-  hero,
-  currentReality,
-  targetUsers,
-  painPoints,
-  valueMappings,
-  workflow,
-  features,
-  permissions,
-  platforms,
-  providers,
-  workflowExample,
-  cta,
-} = productMessaging
-
 const releaseUrl = 'https://github.com/hellotaotao/saytype/releases/latest'
+
+const workflowSteps = [
+  {
+    number: '01',
+    title: 'Hold',
+    detail: 'Press Ctrl+Shift in the app where you want to write.',
+  },
+  {
+    number: '02',
+    title: 'Speak',
+    detail: 'SayType listens while a compact prompt keeps you oriented.',
+  },
+  {
+    number: '03',
+    title: 'Release',
+    detail: 'Your transcript returns to the text field that already has focus.',
+  },
+]
+
+const featureIds = [
+  'global-hotkey',
+  'active-app-insertion',
+  'live-overlay',
+  'engine-choice',
+]
+
+const featuredCapabilities = featureIds.flatMap((id) => {
+  const feature = productMessaging.features.find((item) => item.id === id)
+  return feature ? [feature] : []
+})
 
 function App() {
   return (
-    <main className="site-shell">
+    <div className="site-shell">
       <SiteHeader />
-      <HeroSection />
-      <ProductPreviewSection />
-      <ProblemSection />
-      <HowItWorksSection />
-      <FeaturesSection />
-      <PrivacySection />
-      <PlatformSection />
-      <ProvidersSection />
-      <WorkflowSection />
-      <CtaSection />
-    </main>
+      <main>
+        <HeroSection />
+        <WorkflowSection />
+        <ProductSection />
+        <PrivacySection />
+        <DownloadSection />
+      </main>
+      <SiteFooter />
+    </div>
   )
 }
 
@@ -41,330 +53,54 @@ function SiteHeader() {
   return (
     <header className="site-header" aria-label="Primary navigation">
       <a className="brand-lockup" href="#top" aria-label="SayType home">
-        <span className="brand-mark" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </span>
-        <span>{productName}</span>
+        <img src="./saytype-icon.png" alt="" width="48" height="48" />
+        <span>SayType</span>
       </a>
       <nav className="nav-links" aria-label="Page sections">
-        <a href="#workflow">Workflow</a>
-        <a href="#features">Features</a>
-        <a href="#providers">Providers</a>
+        <a href="#workflow">How it works</a>
+        <a href="#product">Product</a>
+        <a href="#privacy">Privacy</a>
       </nav>
     </header>
   )
 }
 
 function HeroSection() {
+  const { hero } = productMessaging
+
   return (
-    <section className="hero-section section-band" id="top">
-      <HeroBackdrop />
-      <div className="section-inner hero-inner">
-        <div className="hero-copy">
-          <p className="eyebrow">{hero.eyebrow}</p>
-          <h1>{productName}</h1>
-          <p className="hero-headline">{hero.headline}</p>
-          <p className="hero-subheadline">{hero.subheadline}</p>
-          <div className="hero-actions" aria-label="Primary actions">
-            <a className="button button-primary" href={releaseUrl}>
-              {hero.primaryCta}
-            </a>
-            <a className="button button-secondary" href="#workflow">
-              {hero.secondaryCta}
-            </a>
-          </div>
-          <ul className="proof-list" aria-label="Key workflow facts">
-            {hero.proofPoints.map((point) => (
-              <li key={point}>{point}</li>
-            ))}
-          </ul>
-        </div>
+    <section className="hero-section" id="top" aria-labelledby="hero-title">
+      <div className="hero-copy">
+        <h1 id="hero-title">
+          <span>One shortcut.</span>
+          <span>Every app.</span>
+        </h1>
+        <p className="hero-shortcut">{hero.subheadline}</p>
+        <a
+          className="download-button"
+          href={releaseUrl}
+          aria-label="Download SayType for Mac"
+        >
+          <img src="./apple-logo.png" alt="" width="26" height="27" />
+          <span>{hero.primaryCta}</span>
+        </a>
+        <p className="hero-tagline">{hero.eyebrow}</p>
       </div>
-    </section>
-  )
-}
 
-function HeroBackdrop() {
-  return (
-    <div className="hero-backdrop" aria-hidden="true">
-      <div className="desktop-frame desktop-frame-large">
-        <div className="desktop-topbar">
-          <span />
-          <span />
-          <span />
-          <strong>SayType active</strong>
-        </div>
-        <div className="desktop-grid">
-          <div className="editor-pane">
-            <div className="pane-label">Active app</div>
-            <div className="code-line wide" />
-            <div className="code-line" />
-            <div className="code-line short" />
-            <div className="cursor-row">
-              <span className="text-cursor" />
-              <span>Text lands here</span>
-            </div>
-          </div>
-          <div className="settings-pane">
-            <div className="pane-label">Settings</div>
-            <div className="setting-row">
-              <span>Provider</span>
-              <strong>Local Qwen3</strong>
-            </div>
-            <div className="setting-row">
-              <span>Model</span>
-              <strong>On this Mac</strong>
-            </div>
-            <div className="setting-row">
-              <span>Shortcut</span>
-              <strong>Ctrl+Shift</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="voice-prompt voice-prompt-hero">
-        <div className="mic-dot" />
-        <div>
-          <strong>Recording</strong>
-          <span>Hold Ctrl+Shift</span>
-        </div>
-        <Waveform />
-      </div>
-    </div>
-  )
-}
-
-function ProductPreviewSection() {
-  return (
-    <section className="section-band preview-section" aria-labelledby="preview-title">
-      <div className="section-inner">
-        <div className="section-heading">
-          <p className="eyebrow">Product preview</p>
-          <h2 id="preview-title">A desktop input method, not another writing box.</h2>
-          <p>
-            SayType is designed around the active app: it records from a global shortcut,
-            visualizes your voice in a compact prompt, and returns text to the field that
-            already has focus.
-          </p>
-        </div>
-        <div className="product-stage" aria-label="SayType product interface mockup">
-          <div className="app-stack">
-            <div className="mock-window mock-window-editor">
-              <div className="mock-titlebar">
-                <div className="traffic-lights" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <strong>Release notes draft</strong>
-              </div>
-              <div className="mock-content">
-                <div className="document-line large" />
-                <div className="document-line" />
-                <div className="document-line medium" />
-                <div className="insertion-target">
-                  <span className="text-cursor" />
-                  <span>{workflowExample.inserted}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="voice-prompt voice-prompt-preview">
-              <div className="mic-dot" />
-              <div>
-                <strong>Speak now</strong>
-                <span>Release to transcribe</span>
-              </div>
-              <Waveform />
-            </div>
-
-            <div className="mock-window mock-window-settings">
-              <div className="mini-heading">SayType settings</div>
-              <div className="settings-list">
-                <div>
-                  <span>Provider</span>
-                  <strong>Local Qwen3</strong>
-                </div>
-                <div>
-                  <span>Microphone</span>
-                  <strong>System default</strong>
-                </div>
-                <div>
-                  <span>Language</span>
-                  <strong>Auto-detect</strong>
-                </div>
-                <div>
-                  <span>Theme</span>
-                  <strong>Elegant</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-          <aside className="preview-notes" aria-label="Prototype notes">
-            <p className="mini-heading">Current prototype reality</p>
-            <p>{currentReality}</p>
-            <p>
-              On macOS, microphone and Accessibility permission enable the full automatic
-              workflow. If an app blocks insertion, the completed transcription is retained
-              in local History for you to copy.
-            </p>
-          </aside>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function ProblemSection() {
-  return (
-    <section className="section-band problem-section" aria-labelledby="problem-title">
-      <div className="section-inner">
-        <div className="section-heading">
-          <p className="eyebrow">The problem</p>
-          <h2 id="problem-title">Desktop writing is still tied to the keyboard.</h2>
-          <p>
-            Dictation exists, but the moment work moves across IDEs, ticket queues,
-            browsers, terminals, and chat, the experience becomes fragmented.
-          </p>
-        </div>
-        <div className="problem-grid">
-          {painPoints.map((point) => (
-            <article className="problem-card" key={point.id}>
-              <h3>{point.problem}</h3>
-              <p>{point.consequence}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function HowItWorksSection() {
-  return (
-    <section className="section-band how-section" id="workflow" aria-labelledby="how-title">
-      <div className="section-inner">
-        <div className="section-heading">
-          <p className="eyebrow">How it works</p>
-          <h2 id="how-title">One gesture from thought to inserted text.</h2>
-          <p>
-            The core workflow is intentionally short: hold, speak, release, and keep
-            going in the app where you started.
-          </p>
-        </div>
-        <ol className="workflow-grid">
-          {workflow.map((step) => (
-            <li className="workflow-card" key={step.label}>
-              <span>{step.label}</span>
-              <h3>{step.title}</h3>
-              <p>{step.description}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  )
-}
-
-function FeaturesSection() {
-  return (
-    <section className="section-band features-section" id="features" aria-labelledby="features-title">
-      <div className="section-inner">
-        <div className="section-heading compact-heading">
-          <p className="eyebrow">Feature set</p>
-          <h2 id="features-title">Built for repeated desktop use.</h2>
-        </div>
-        <div className="feature-grid">
-          {features.map((feature) => (
-            <article className="feature-card" key={feature.id}>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function PrivacySection() {
-  return (
-    <section className="section-band privacy-section" aria-labelledby="privacy-title">
-      <div className="section-inner privacy-layout">
-        <div>
-          <p className="eyebrow">Privacy and permissions</p>
-          <h2 id="privacy-title">Honest controls for a desktop prototype.</h2>
-          <p>
-            SayType is explicit about what it needs. Local mode keeps audio on this Mac;
-            cloud mode sends audio directly to the provider you configure. OS permissions
-            are requested only for the desktop workflow.
-          </p>
-        </div>
-        <div className="permission-list">
-          {permissions.map((detail) => (
-            <article className="permission-card" key={detail.title}>
-              <h3>{detail.title}</h3>
-              <p>{detail.description}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function PlatformSection() {
-  return (
-    <section className="section-band platform-section" aria-labelledby="platform-title">
-      <div className="section-inner">
-        <div className="section-heading compact-heading">
-          <p className="eyebrow">Platform status</p>
-          <h2 id="platform-title">Built and tested first for macOS.</h2>
-        </div>
-        <div className="platform-grid">
-          {platforms.map((platform) => (
-            <article className="platform-card" key={platform.name}>
-              <div>
-                <h3>{platform.name}</h3>
-                <span>{platform.status}</span>
-              </div>
-              <p>{platform.detail}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function ProvidersSection() {
-  return (
-    <section className="section-band providers-section" id="providers" aria-labelledby="providers-title">
-      <div className="section-inner provider-layout">
-        <div>
-          <p className="eyebrow">Transcription engines</p>
-          <h2 id="providers-title">Start local. Switch when your workflow needs it.</h2>
-          <p>
-            Switch engines from the tray or home screen. Apple Silicon Macs surface Local
-            Qwen3 as the recommended option; Groq and OpenAI stay available when you need
-            cloud transcription or translation.
-          </p>
-        </div>
-        <div className="provider-grid">
-          {providers.map((provider) => (
-            <article className="provider-card" key={provider.name}>
-              <h3>{provider.name}</h3>
-              <ul>
-                {provider.models.map((model) => (
-                  <li key={model}>{model}</li>
-                ))}
-              </ul>
-              <p>{provider.note}</p>
-            </article>
-          ))}
-        </div>
+      <div className="hero-visual" aria-label="Voice becomes text in SayType">
+        <img
+          className="hero-waveform"
+          src="./saytype-waveform.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <img className="hero-cursor" src="./saytype-cursor.png" alt="" aria-hidden="true" />
+        <figure className="hero-product">
+          <img
+            src="./saytype-settings.png"
+            alt="SayType settings showing the recording shortcut, permissions, language, and light theme"
+          />
+        </figure>
       </div>
     </section>
   )
@@ -372,84 +108,137 @@ function ProvidersSection() {
 
 function WorkflowSection() {
   return (
-    <section className="section-band fit-section" aria-labelledby="fit-title">
-      <div className="section-inner">
-        <div className="section-heading">
-          <p className="eyebrow">Workflow fit</p>
-          <h2 id="fit-title">Made for people who write across many apps.</h2>
+    <section className="workflow-section" id="workflow" aria-labelledby="workflow-title">
+      <div className="section-kicker">
+        <span>01</span>
+        <span>The gesture</span>
+      </div>
+      <div className="workflow-heading">
+        <h2 id="workflow-title">Hold. Speak. Release.</h2>
+        <p>One physical gesture carries a thought all the way back to your cursor.</p>
+      </div>
+      <ol className="workflow-list">
+        {workflowSteps.map((step) => (
+          <li key={step.number}>
+            <span className="step-number">{step.number}</span>
+            <h3>{step.title}</h3>
+            <p>{step.detail}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+function ProductSection() {
+  return (
+    <section className="product-section" id="product" aria-labelledby="product-title">
+      <div className="section-kicker">
+        <span>02</span>
+        <span>The product</span>
+      </div>
+      <div className="product-layout">
+        <div className="product-copy">
+          <h2 id="product-title">Ready when you are. Invisible when you’re not.</h2>
           <p>
-            The value is not just faster text. It is keeping context where it already
-            lives: the editor, the ticket, the chat reply, the document, or the terminal
-            note.
+            SayType stays in the background until the shortcut is held. Choose a local
+            model or your own cloud provider without changing the way you dictate.
           </p>
-        </div>
-        <div className="fit-layout">
-          <div className="audience-list">
-            {targetUsers.map((user) => (
-              <article className="audience-card" key={user.id}>
-                <h3>{user.title}</h3>
-                <p>{user.need}</p>
-                <strong>{user.value}</strong>
+          <div className="capability-list">
+            {featuredCapabilities.map((feature, index) => (
+              <article key={feature.id}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
+                </div>
               </article>
             ))}
           </div>
-          <div className="dictation-example">
-            <p className="mini-heading">Example dictation</p>
-            <blockquote>{workflowExample.dictated}</blockquote>
-            <div>
-              <span>Used inside</span>
-              <strong>{workflowExample.sourceApp}</strong>
-            </div>
-          </div>
         </div>
-        <div className="mapping-strip" aria-label="Feature value mappings">
-          {valueMappings.map((mapping) => {
-            const feature = features.find((item) => item.id === mapping.featureId)
-            return (
-              <article key={mapping.painPointId}>
-                <span>{feature?.title}</span>
-                <p>{mapping.value}</p>
-              </article>
-            )
-          })}
-        </div>
+        <figure className="settings-figure">
+          <div className="settings-accent settings-accent-coral" />
+          <img
+            src="./saytype-home.png"
+            alt="SayType ready to dictate with local model, microphone, and Accessibility ready"
+          />
+          <div className="settings-accent settings-accent-cyan" />
+        </figure>
       </div>
     </section>
   )
 }
 
-function CtaSection() {
+function PrivacySection() {
+  const localProvider = productMessaging.providers.find(
+    (provider) => provider.name === 'Local Qwen3',
+  )
+
   return (
-    <section className="section-band cta-section" id="cta" aria-labelledby="cta-title">
-      <div className="section-inner cta-inner">
-        <div>
-          <p className="eyebrow">Try the prototype</p>
-          <h2 id="cta-title">{cta.headline}</h2>
-          <p>{cta.description}</p>
+    <section className="privacy-section" id="privacy" aria-labelledby="privacy-title">
+      <div className="section-kicker">
+        <span>03</span>
+        <span>Your choice</span>
+      </div>
+      <div className="privacy-layout">
+        <div className="privacy-copy">
+          <p className="privacy-label">Local first</p>
+          <h2 id="privacy-title">Your audio can stay on your Mac.</h2>
+          <p>
+            Run Qwen3-ASR locally on Apple Silicon after a one-time model download. No
+            account and no API key are required for local transcription.
+          </p>
         </div>
-        <div className="cta-panel">
-          <p>{cta.note}</p>
-          <a className="button button-primary" href={releaseUrl}>
-            View latest release
-          </a>
+        <div className="engine-list" aria-label="Available transcription engines">
+          {productMessaging.providers.map((provider) => (
+            <article key={provider.name}>
+              <div>
+                <h3>{provider.name}</h3>
+                <span>{provider.name === localProvider?.name ? 'On-device' : 'Your key'}</span>
+              </div>
+              <p>{provider.note}</p>
+            </article>
+          ))}
         </div>
+      </div>
+      <p className="platform-note">
+        macOS is the primary tested path. Windows and Linux builds remain experimental.
+      </p>
+    </section>
+  )
+}
+
+function DownloadSection() {
+  return (
+    <section className="download-section" id="download" aria-labelledby="download-title">
+      <img className="download-waveform" src="./saytype-waveform.png" alt="" aria-hidden="true" />
+      <div className="download-copy">
+        <p>Say less to your keyboard.</p>
+        <h2 id="download-title">Speak. It’s already typed.</h2>
+        <a
+          className="download-button"
+          href={releaseUrl}
+          aria-label="Download SayType for Mac"
+        >
+          <img src="./apple-logo.png" alt="" width="26" height="27" />
+          <span>Download for Mac</span>
+        </a>
+        <small>Apple Silicon recommended · Latest GitHub release</small>
       </div>
     </section>
   )
 }
 
-function Waveform() {
+function SiteFooter() {
   return (
-    <div className="waveform" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-      <span />
-      <span />
-      <span />
-      <span />
-      <span />
-    </div>
+    <footer className="site-footer">
+      <a className="brand-lockup" href="#top" aria-label="Back to top">
+        <img src="./saytype-icon.png" alt="" width="42" height="42" />
+        <span>SayType</span>
+      </a>
+      <p>Voice to text, in any app.</p>
+      <a href={releaseUrl}>GitHub releases ↗</a>
+    </footer>
   )
 }
 

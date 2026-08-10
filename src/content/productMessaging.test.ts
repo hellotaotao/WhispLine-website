@@ -4,6 +4,13 @@ import { productMessaging } from './productMessaging'
 const serializedMessaging = JSON.stringify(productMessaging).toLowerCase()
 
 describe('productMessaging', () => {
+  it('matches the selected launch hero direction', () => {
+    expect(productMessaging.hero.headline).toBe('One shortcut. Every app.')
+    expect(productMessaging.hero.subheadline).toBe('Hold Ctrl+Shift, speak, release.')
+    expect(productMessaging.hero.primaryCta).toBe('Download for Mac')
+    expect(productMessaging.hero.secondaryCta).toBe('See how it works')
+  })
+
   it('names SayType consistently and describes the current desktop reality', () => {
     expect(productMessaging.productName).toBe('SayType')
     expect(productMessaging.currentReality).toContain('Tauri')

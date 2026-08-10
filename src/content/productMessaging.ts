@@ -82,12 +82,11 @@ export const productMessaging: ProductMessaging = {
   currentReality:
     'SayType is a Tauri desktop voice input app. On Apple Silicon Macs it can run Qwen3 transcription locally after a one-time model download; Groq and OpenAI remain optional cloud engines using your own key.',
   hero: {
-    eyebrow: 'Desktop voice input for every text field',
-    headline: 'Don’t type. Say it.',
-    subheadline:
-      'Hold Ctrl+Shift, speak, release. SayType transcribes locally on your Mac or through a cloud engine you choose, then returns text to the app already under your cursor.',
-    primaryCta: 'Get the desktop build',
-    secondaryCta: 'See the workflow',
+    eyebrow: 'Your voice, instantly typed.',
+    headline: 'One shortcut. Every app.',
+    subheadline: 'Hold Ctrl+Shift, speak, release.',
+    primaryCta: 'Download for Mac',
+    secondaryCta: 'See how it works',
     proofPoints: [
       'Hold Ctrl+Shift to record',
       'Release to transcribe',
