@@ -33,6 +33,19 @@ const featuredCapabilities = featureIds.flatMap((id) => {
   return feature ? [feature] : []
 })
 
+const practicalDetails = [
+  { label: 'Input', detail: 'Choose your microphone' },
+  { label: 'Control', detail: 'Press Escape to cancel' },
+  { label: 'Presence', detail: 'Runs quietly from the menu bar' },
+]
+
+const downloadRequirements = [
+  'macOS primary',
+  'Apple Silicon for local transcription',
+  '~1 GB model download',
+  'Microphone and Accessibility permissions required',
+]
+
 function App() {
   return (
     <div className="site-shell">
@@ -165,6 +178,20 @@ function ProductSection() {
           <div className="settings-accent settings-accent-cyan" />
         </figure>
       </div>
+      <div className="product-reassurance">
+        <div className="history-reassurance">
+          <span>Nothing gets lost</span>
+          <p>If an app blocks insertion, your transcript stays in History for easy copying.</p>
+        </div>
+        <ul className="practical-details" aria-label="Practical desktop controls">
+          {practicalDetails.map((detail) => (
+            <li key={detail.label}>
+              <span>{detail.label}</span>
+              <strong>{detail.detail}</strong>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )
 }
@@ -189,16 +216,21 @@ function PrivacySection() {
             account and no API key are required for local transcription.
           </p>
         </div>
-        <div className="engine-list" aria-label="Available transcription engines">
-          {productMessaging.providers.map((provider) => (
-            <article key={provider.name}>
-              <div>
-                <h3>{provider.name}</h3>
-                <span>{provider.name === localProvider?.name ? 'On-device' : 'Your key'}</span>
-              </div>
-              <p>{provider.note}</p>
-            </article>
-          ))}
+        <div className="engine-panel">
+          <div className="engine-list" aria-label="Available transcription engines">
+            {productMessaging.providers.map((provider) => (
+              <article key={provider.name}>
+                <div>
+                  <h3>{provider.name}</h3>
+                  <span>{provider.name === localProvider?.name ? 'On-device' : 'Your key'}</span>
+                </div>
+                <p>{provider.note}</p>
+              </article>
+            ))}
+          </div>
+          <p className="cloud-disclosure">
+            Cloud mode sends audio directly to the provider configured with your own API key.
+          </p>
         </div>
       </div>
       <p className="platform-note">
@@ -223,7 +255,11 @@ function DownloadSection() {
           <img src="./apple-logo.png" alt="" width="26" height="27" />
           <span>Download for Mac</span>
         </a>
-        <small>Apple Silicon recommended · Latest GitHub release</small>
+        <ul className="download-requirements" aria-label="Download requirements">
+          {downloadRequirements.map((requirement) => (
+            <li key={requirement}>{requirement}</li>
+          ))}
+        </ul>
       </div>
     </section>
   )

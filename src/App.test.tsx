@@ -29,4 +29,32 @@ describe('SayType launch page', () => {
     expect(html).toContain('aria-labelledby="workflow-title"')
     expect(html).toContain('aria-labelledby="privacy-title"')
   })
+
+  it('explains recovery and practical desktop controls', () => {
+    const html = renderToStaticMarkup(<App />)
+
+    expect(html).toContain(
+      'If an app blocks insertion, your transcript stays in History for easy copying.',
+    )
+    expect(html).toContain('Choose your microphone')
+    expect(html).toContain('Press Escape to cancel')
+    expect(html).toContain('Runs quietly from the menu bar')
+  })
+
+  it('makes the cloud privacy boundary explicit', () => {
+    const html = renderToStaticMarkup(<App />)
+
+    expect(html).toContain(
+      'Cloud mode sends audio directly to the provider configured with your own API key.',
+    )
+  })
+
+  it('states local transcription requirements before download', () => {
+    const html = renderToStaticMarkup(<App />)
+
+    expect(html).toContain('macOS primary')
+    expect(html).toContain('Apple Silicon for local transcription')
+    expect(html).toContain('~1 GB model download')
+    expect(html).toContain('Microphone and Accessibility permissions required')
+  })
 })
