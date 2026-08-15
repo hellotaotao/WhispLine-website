@@ -26,6 +26,9 @@ describe('SayType launch page', () => {
 
     expect(html).toContain('aria-label="Primary navigation"')
     expect(html).toContain('aria-label="Download SayType for Mac"')
+    expect(html).toContain(
+      'href="https://github.com/hellotaotao/saytype/releases/download/v1.8.5/SayType_1.8.5_universal.dmg"',
+    )
     expect(html).toContain('aria-labelledby="workflow-title"')
     expect(html).toContain('aria-labelledby="privacy-title"')
   })

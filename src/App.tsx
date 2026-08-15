@@ -1,7 +1,13 @@
 import './App.css'
+import { useState, type MouseEvent } from 'react'
 import { productMessaging } from './content/productMessaging'
-
-const releaseUrl = 'https://github.com/hellotaotao/saytype/releases/latest'
+import {
+  detectDownloadPlatform,
+  getFallbackDownloadUrl,
+  releasePageUrl,
+  resolveLatestDownloadUrl,
+  type DownloadPlatform,
+} from './downloads'
 
 const workflowSteps = [
   {
@@ -46,6 +52,25 @@ const downloadRequirements = [
   'Microphone and Accessibility permissions required',
 ]
 
+const downloadPlatforms: Record<DownloadPlatform, { label: string; name: string }> = {
+  macos: { label: 'Download for Mac', name: 'Mac' },
+  windows: { label: 'Download for Windows', name: 'Windows' },
+  linux: { label: 'Download for Linux', name: 'Linux' },
+}
+
+function getCurrentDownloadPlatform(): DownloadPlatform | null {
+  if (typeof navigator === 'undefined') {
+    return 'macos'
+  }
+
+  const navigatorWithUserAgentData = navigator as Navigator & {
+    userAgentData?: { platform?: string }
+  }
+  const platform = navigatorWithUserAgentData.userAgentData?.platform ?? navigator.platform
+
+  return detectDownloadPlatform(platform, navigator.userAgent)
+}
+
 function App() {
   return (
     <div className="site-shell">
@@ -78,6 +103,60 @@ function SiteHeader() {
   )
 }
 
+function DownloadButton({ macLabel }: { macLabel?: string }) {
+  const [platform] = useState(getCurrentDownloadPlatform)
+  const [isResolving, setIsResolving] = useState(false)
+  const platformDetails = platform ? downloadPlatforms[platform] : null
+  const label =
+    platform === 'macos' && macLabel
+      ? macLabel
+      : platformDetails?.label ?? 'View downloads'
+  const href = platform ? getFallbackDownloadUrl(platform) : releasePageUrl
+
+  const handleClick = async (event: MouseEvent<HTMLAnchorElement>) => {
+    if (
+      !platform ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return
+    }
+
+    event.preventDefault()
+    if (isResolving) {
+      return
+    }
+
+    setIsResolving(true)
+    const downloadUrl = await resolveLatestDownloadUrl(platform)
+    window.location.assign(downloadUrl)
+  }
+
+  return (
+    <a
+      className="download-button"
+      href={href}
+      aria-label={
+        platformDetails ? `Download SayType for ${platformDetails.name}` : 'View SayType downloads'
+      }
+      aria-busy={isResolving || undefined}
+      onClick={handleClick}
+    >
+      {platform === 'macos' ? (
+        <img src="./apple-logo.png" alt="" width="26" height="27" />
+      ) : (
+        <svg className="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" />
+        </svg>
+      )}
+      <span>{isResolving ? 'Preparing download…' : label}</span>
+    </a>
+  )
+}
+
 function HeroSection() {
   const { hero } = productMessaging
 
@@ -89,14 +168,7 @@ function HeroSection() {
           <span>Every app.</span>
         </h1>
         <p className="hero-shortcut">{hero.subheadline}</p>
-        <a
-          className="download-button"
-          href={releaseUrl}
-          aria-label="Download SayType for Mac"
-        >
-          <img src="./apple-logo.png" alt="" width="26" height="27" />
-          <span>{hero.primaryCta}</span>
-        </a>
+        <DownloadButton macLabel={hero.primaryCta} />
         <p className="hero-tagline">{hero.eyebrow}</p>
       </div>
 
@@ -247,14 +319,7 @@ function DownloadSection() {
       <div className="download-copy">
         <p>Say less to your keyboard.</p>
         <h2 id="download-title">Speak. It’s already typed.</h2>
-        <a
-          className="download-button"
-          href={releaseUrl}
-          aria-label="Download SayType for Mac"
-        >
-          <img src="./apple-logo.png" alt="" width="26" height="27" />
-          <span>Download for Mac</span>
-        </a>
+        <DownloadButton />
         <ul className="download-requirements" aria-label="Download requirements">
           {downloadRequirements.map((requirement) => (
             <li key={requirement}>{requirement}</li>
@@ -273,7 +338,7 @@ function SiteFooter() {
         <span>SayType</span>
       </a>
       <p>Voice to text, in any app.</p>
-      <a href={releaseUrl}>GitHub releases ↗</a>
+      <a href={releasePageUrl}>GitHub releases ↗</a>
     </footer>
   )
 }

@@ -129,6 +129,20 @@
   height: auto;
 }
 
+.download-icon {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.download-button[aria-busy="true"] {
+  cursor: wait;
+}
+
 .hero-tagline {
   margin: 18px 0 0 4px;
   color: #6b767a;
