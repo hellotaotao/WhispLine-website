@@ -82,8 +82,8 @@ export const productMessaging: ProductMessaging = {
   currentReality:
     'SayType is a Tauri desktop voice input app. On Apple Silicon Macs it can run Qwen3 transcription locally after a one-time model download; Groq and OpenAI remain optional cloud engines using your own key.',
   hero: {
-    eyebrow: 'Your voice, instantly typed.',
-    headline: 'One shortcut. Every app.',
+    eyebrow: '100% local transcription. No account. No subscription.',
+    headline: 'Your voice. Your Mac.',
     subheadline: 'Hold Ctrl+Shift, speak, release.',
     primaryCta: 'Download for Mac',
     secondaryCta: 'See how it works',
@@ -221,8 +221,8 @@ export const productMessaging: ProductMessaging = {
     },
     {
       id: 'engine-choice',
-      title: 'Local-first engine choice',
-      description: 'Apple Silicon Macs can run Qwen3-ASR locally after a ~1 GB one-time download. Or connect your own Groq or OpenAI key.',
+      title: '100% local transcription',
+      description: 'Turn speech into text on your Mac. In local mode, your audio and transcript stay on your device.',
     },
     {
       id: 'microphone-choice',
@@ -302,7 +302,7 @@ export const productMessaging: ProductMessaging = {
       'The regression is probably in the new permission flow. I am going to add a retry around the accessibility recheck and update the release notes.',
   },
   cta: {
-    headline: 'A faster way to write, without sending every thought to the cloud.',
+    headline: 'Your voice. No cloud required.',
     description:
       'Use SayType when typing becomes the bottleneck: comments, tickets, docs, replies, notes, and multilingual work across the apps you already use.',
     note: 'macOS is the primary path. Local mode needs an Apple Silicon Mac and a ~1 GB model download; microphone access and macOS Accessibility permission are required for the full voice-typing workflow.',

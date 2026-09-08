@@ -6,8 +6,9 @@ describe('SayType launch page', () => {
   it('renders the selected voice-to-cursor hero and primary path', () => {
     const html = renderToStaticMarkup(<App />)
 
-    expect(html).toContain('One shortcut.')
-    expect(html).toContain('Every app.')
+    expect(html).toContain('Your voice.')
+    expect(html).toContain('Your Mac.')
+    expect(html).toContain('100% local transcription. No account. No subscription.')
     expect(html).toContain('Hold Ctrl+Shift, speak, release.')
     expect(html).toContain('Download for Mac')
     expect(html).toContain('href="#workflow"')
@@ -48,8 +49,18 @@ describe('SayType launch page', () => {
     const html = renderToStaticMarkup(<App />)
 
     expect(html).toContain(
-      'Cloud mode sends audio directly to the provider configured with your own API key.',
+      'Optional cloud transcription and translation send audio to Groq or OpenAI using your own API key. Provider charges may apply.',
     )
+  })
+
+  it('leads with local ownership rather than cloud engine selection', () => {
+    const html = renderToStaticMarkup(<App />)
+
+    expect(html).toContain('Your words stay on your Mac.')
+    expect(html).toContain('Works offline')
+    expect(html).toContain('No subscription or word limits')
+    expect(html).toContain('Transcribe first. Edit on your terms.')
+    expect(html).not.toContain('Available transcription engines')
   })
 
   it('states local transcription requirements before download', () => {

@@ -5,7 +5,7 @@ const serializedMessaging = JSON.stringify(productMessaging).toLowerCase()
 
 describe('productMessaging', () => {
   it('matches the selected launch hero direction', () => {
-    expect(productMessaging.hero.headline).toBe('One shortcut. Every app.')
+    expect(productMessaging.hero.headline).toBe('Your voice. Your Mac.')
     expect(productMessaging.hero.subheadline).toBe('Hold Ctrl+Shift, speak, release.')
     expect(productMessaging.hero.primaryCta).toBe('Download for Mac')
     expect(productMessaging.hero.secondaryCta).toBe('See how it works')

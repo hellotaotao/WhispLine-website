@@ -30,8 +30,8 @@ const workflowSteps = [
 const featureIds = [
   'global-hotkey',
   'active-app-insertion',
-  'live-overlay',
   'engine-choice',
+  'live-overlay',
 ]
 
 const featuredCapabilities = featureIds.flatMap((id) => {
@@ -164,8 +164,8 @@ function HeroSection() {
     <section className="hero-section" id="top" aria-labelledby="hero-title">
       <div className="hero-copy">
         <h1 id="hero-title">
-          <span>One shortcut.</span>
-          <span>Every app.</span>
+          <span>Your voice.</span>
+          <span>Your Mac.</span>
         </h1>
         <p className="hero-shortcut">{hero.subheadline}</p>
         <DownloadButton macLabel={hero.primaryCta} />
@@ -226,8 +226,8 @@ function ProductSection() {
         <div className="product-copy">
           <h2 id="product-title">Ready when you are. Invisible when you’re not.</h2>
           <p>
-            SayType stays in the background until the shortcut is held. Choose a local
-            model or your own cloud provider without changing the way you dictate.
+            Speak into the app you already use. SayType transcribes on your Mac and
+            puts the words at your cursor, without a cloud round trip.
           </p>
           <div className="capability-list">
             {featuredCapabilities.map((feature, index) => (
@@ -252,7 +252,7 @@ function ProductSection() {
       </div>
       <div className="product-reassurance">
         <div className="history-reassurance">
-          <span>Nothing gets lost</span>
+          <span>Your transcript, saved locally</span>
           <p>If an app blocks insertion, your transcript stays in History for easy copying.</p>
         </div>
         <ul className="practical-details" aria-label="Practical desktop controls">
@@ -269,39 +269,41 @@ function ProductSection() {
 }
 
 function PrivacySection() {
-  const localProvider = productMessaging.providers.find(
-    (provider) => provider.name === 'Local Qwen3',
-  )
+  const localBenefits = [
+    { title: 'Works offline', detail: 'Download a local model once, then transcribe without an internet connection.' },
+    { title: 'No subscription or word limits', detail: 'Local transcription needs no account or API key. No weekly allowance and no per-minute service fees.' },
+    { title: 'Transcribe first. Edit on your terms.', detail: 'Get your words as text. You decide whether to rewrite them, which tool to use, and what to share.' },
+  ]
 
   return (
     <section className="privacy-section" id="privacy" aria-labelledby="privacy-title">
       <div className="section-kicker">
         <span>03</span>
-        <span>Your choice</span>
+        <span>Local by design</span>
       </div>
       <div className="privacy-layout">
         <div className="privacy-copy">
-          <p className="privacy-label">Local first</p>
-          <h2 id="privacy-title">Your audio can stay on your Mac.</h2>
+          <p className="privacy-label">100% on-device transcription</p>
+          <h2 id="privacy-title">Your words stay on your Mac.</h2>
           <p>
-            Run Qwen3-ASR locally on Apple Silicon after a one-time model download. No
-            account and no API key are required for local transcription.
+            In local mode, audio is processed on your Mac and transcripts are saved
+            there. Neither is uploaded for transcription. Your everyday thoughts
+            do not need a trip to someone else’s server.
           </p>
         </div>
         <div className="engine-panel">
-          <div className="engine-list" aria-label="Available transcription engines">
-            {productMessaging.providers.map((provider) => (
-              <article key={provider.name}>
+          <div className="engine-list" aria-label="Benefits of local transcription">
+            {localBenefits.map((benefit) => (
+              <article key={benefit.title}>
                 <div>
-                  <h3>{provider.name}</h3>
-                  <span>{provider.name === localProvider?.name ? 'On-device' : 'Your key'}</span>
+                  <h3>{benefit.title}</h3>
                 </div>
-                <p>{provider.note}</p>
+                <p>{benefit.detail}</p>
               </article>
             ))}
           </div>
           <p className="cloud-disclosure">
-            Cloud mode sends audio directly to the provider configured with your own API key.
+            Optional cloud transcription and translation send audio to Groq or OpenAI using your own API key. Provider charges may apply.
           </p>
         </div>
       </div>
@@ -317,8 +319,8 @@ function DownloadSection() {
     <section className="download-section" id="download" aria-labelledby="download-title">
       <img className="download-waveform" src="./saytype-waveform.png" alt="" aria-hidden="true" />
       <div className="download-copy">
-        <p>Say less to your keyboard.</p>
-        <h2 id="download-title">Speak. It’s already typed.</h2>
+        <p>Offline dictation. No account. No subscription.</p>
+        <h2 id="download-title">Your voice. No cloud required.</h2>
         <DownloadButton />
         <ul className="download-requirements" aria-label="Download requirements">
           {downloadRequirements.map((requirement) => (
@@ -337,7 +339,7 @@ function SiteFooter() {
         <img src="./saytype-icon.png" alt="" width="42" height="42" />
         <span>SayType</span>
       </a>
-      <p>Voice to text, in any app.</p>
+      <p>Voice to text. On your device.</p>
       <a href={releasePageUrl}>GitHub releases ↗</a>
     </footer>
   )
