@@ -3,6 +3,7 @@ import {
   detectDownloadPlatform,
   getFallbackDownloadUrl,
   latestReleaseApiUrl,
+  releasePageUrl,
   resolveLatestDownloadUrl,
   selectReleaseAsset,
 } from './downloads'
@@ -73,10 +74,16 @@ describe('release asset selection', () => {
     expect(selectReleaseAsset(platform, releaseAssets)?.browser_download_url).toBe(expectedUrl)
   })
 
-  it('keeps a permanent direct-download fallback for each platform', () => {
-    expect(getFallbackDownloadUrl('macos')).toMatch(/\/SayType_1\.8\.5_universal\.dmg$/)
-    expect(getFallbackDownloadUrl('windows')).toMatch(/\/SayType_1\.8\.5_x64-setup\.exe$/)
-    expect(getFallbackDownloadUrl('linux')).toMatch(/\/SayType_1\.8\.5_amd64\.AppImage$/)
+  it.each(['macos', 'windows', 'linux'] as const)('uses the latest release page for %s fallback', (platform) => {
+    expect(getFallbackDownloadUrl(platform)).toBe(releasePageUrl)
+  })
+
+  it.each([null, {}, { assets: [] }, { assets: [null, { name: 4 }] }])('handles malformed or missing assets', async (release) => {
+    await expect(resolveLatestDownloadUrl('macos', async () => ({ ok: true, json: async () => release }))).resolves.toBe(releasePageUrl)
+  })
+
+  it('handles a rejected release response', async () => {
+    await expect(resolveLatestDownloadUrl('macos', async () => ({ ok: false, json: async () => ({}) }))).resolves.toBe(releasePageUrl)
   })
 
   it('resolves the latest installer from GitHub release metadata', async () => {
@@ -94,7 +101,7 @@ describe('release asset selection', () => {
     )
   })
 
-  it('falls back to a direct installer when release metadata is unavailable', async () => {
+  it('falls back to the latest release page when release metadata is unavailable', async () => {
     const fetchRelease = async () => {
       throw new Error('offline')
     }

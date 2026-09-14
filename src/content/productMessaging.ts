@@ -41,7 +41,7 @@ export type PlatformDetail = {
 }
 
 export type ProviderDetail = {
-  name: 'Local Qwen3' | 'Groq' | 'OpenAI'
+  name: 'Local Qwen3' | 'Local Nemotron' | 'Groq' | 'OpenAI'
   models: string[]
   note: string
 }
@@ -82,8 +82,8 @@ export const productMessaging: ProductMessaging = {
   currentReality:
     'SayType is a Tauri desktop voice input app. On Apple Silicon Macs it can run Qwen3 transcription locally after a one-time model download; Groq and OpenAI remain optional cloud engines using your own key.',
   hero: {
-    eyebrow: '100% local transcription. No account. No subscription.',
-    headline: 'Your voice. Your Mac.',
+    eyebrow: 'Local transcription. No account. No subscription.',
+    headline: 'Your voice. Right where you work.',
     subheadline: 'Hold Ctrl+Shift, speak, release.',
     primaryCta: 'Download for Mac',
     secondaryCta: 'See how it works',
@@ -111,7 +111,7 @@ export const productMessaging: ProductMessaging = {
       id: 'bilingual-workers',
       title: 'Bilingual workers',
       need: 'Switch between languages for messages, docs, and support replies.',
-      value: 'Choose transcription language behavior and UI language from settings.',
+      value: 'Qwen detects the spoken language automatically. Nemotron and cloud engines offer a language setting; the interface language is configured separately.',
     },
     {
       id: 'support-ops',
@@ -225,9 +225,14 @@ export const productMessaging: ProductMessaging = {
       description: 'Turn speech into text on your Mac. In local mode, your audio and transcript stay on your device.',
     },
     {
+      id: 'translation',
+      title: 'Speak it. Write it in English.',
+      description: 'Hold Shift+Alt to translate speech into English through a cloud provider using your own API key.',
+    },
+    {
       id: 'microphone-choice',
-      title: 'Choose the microphone that works for you',
-      description: 'Select a microphone from Settings or the tray. If a saved device is unavailable, SayType safely uses the system default until it returns.',
+      title: 'Uses your system’s default microphone',
+      description: 'Change your input device in your operating system’s sound settings.',
     },
     {
       id: 'quiet-background',
@@ -236,8 +241,8 @@ export const productMessaging: ProductMessaging = {
     },
     {
       id: 'history',
-      title: 'History and manual copy',
-      description: 'Completed transcriptions are saved locally in History, so you can review and copy a result whenever you need it.',
+      title: 'History, copy and retry',
+      description: 'Copy saved transcripts from History. If transcription fails and audio was saved, retry it with your current engine.',
     },
   ],
   permissions: [
@@ -264,7 +269,7 @@ export const productMessaging: ProductMessaging = {
     {
       name: 'macOS',
       status: 'Primary desktop path',
-      detail: 'The primary, tested path: menu bar operation, local Qwen3 on Apple Silicon, microphone selection, Accessibility permission, and CGEvent-based automatic text insertion.',
+      detail: 'The primary, tested path: menu bar operation, local Qwen3 (Apple Silicon recommended), system-default microphone, Accessibility permission, and CGEvent-based automatic text insertion.',
     },
     {
       name: 'Windows',
@@ -280,8 +285,13 @@ export const productMessaging: ProductMessaging = {
   providers: [
     {
       name: 'Local Qwen3',
-      models: ['Qwen3-ASR-0.6B Q8_0', '~1 GB one-time download'],
-      note: 'Recommended on Apple Silicon Macs. No account or API key; audio stays on your machine. Translation still uses a configured cloud engine.',
+      models: ['Qwen3-ASR 0.6B (recommended)', 'Qwen3-ASR 1.7B (experimental)'],
+      note: 'Apple Silicon recommended. Qwen3-ASR 0.6B needs a ~1 GB one-time download; the experimental 1.7B model needs ~2.52 GB. No account or API key; audio stays on your machine. Translation uses a configured cloud provider.',
+    },
+    {
+      name: 'Local Nemotron',
+      models: ['Nemotron 3.5 ASR'],
+      note: 'Experimental live transcription on macOS arm64 and Windows x64. Accuracy may be lower than Qwen; the dictionary is not applied.',
     },
     {
       name: 'Groq',
@@ -290,8 +300,8 @@ export const productMessaging: ProductMessaging = {
     },
     {
       name: 'OpenAI',
-      models: ['whisper-1', 'gpt-4o-transcribe', 'gpt-4o-mini-transcribe'],
-      note: 'OpenAI transcription models, with whisper-1 used for translation mode.',
+      models: ['gpt-transcribe'],
+      note: 'The current transcription choice in Settings. English translation uses whisper-1.',
     },
   ],
   workflowExample: {
@@ -305,6 +315,6 @@ export const productMessaging: ProductMessaging = {
     headline: 'Your voice. No cloud required.',
     description:
       'Use SayType when typing becomes the bottleneck: comments, tickets, docs, replies, notes, and multilingual work across the apps you already use.',
-    note: 'macOS is the primary path. Local mode needs an Apple Silicon Mac and a ~1 GB model download; microphone access and macOS Accessibility permission are required for the full voice-typing workflow.',
+    note: 'macOS is the primary path. Apple Silicon is recommended for local dictation, with a ~1 GB download for Qwen3-ASR 0.6B; microphone access and macOS Accessibility permission are required for the full voice-typing workflow.',
   },
 }

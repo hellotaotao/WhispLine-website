@@ -1,5 +1,7 @@
 import './App.css'
-import { useState, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
+import { getPreviewLayout, type PreviewLayout } from './preview'
+import { setupPageMotion } from './motion'
 import { productMessaging } from './content/productMessaging'
 import {
   detectDownloadPlatform,
@@ -31,7 +33,7 @@ const featureIds = [
   'global-hotkey',
   'active-app-insertion',
   'engine-choice',
-  'live-overlay',
+  'translation',
 ]
 
 const featuredCapabilities = featureIds.flatMap((id) => {
@@ -40,15 +42,15 @@ const featuredCapabilities = featureIds.flatMap((id) => {
 })
 
 const practicalDetails = [
-  { label: 'Input', detail: 'Choose your microphone' },
+  { label: 'Input', detail: 'Uses your system’s default microphone' },
   { label: 'Control', detail: 'Press Escape to cancel' },
   { label: 'Presence', detail: 'Runs quietly from the menu bar' },
 ]
 
 const downloadRequirements = [
   'macOS primary',
-  'Apple Silicon for local transcription',
-  '~1 GB model download',
+  'Apple Silicon recommended for local dictation',
+  '~1 GB download for Qwen3-ASR 0.6B',
   'Microphone and Accessibility permissions required',
 ]
 
@@ -71,18 +73,34 @@ function getCurrentDownloadPlatform(): DownloadPlatform | null {
   return detectDownloadPlatform(platform, navigator.userAgent)
 }
 
-function App() {
+function App({ preview = getPreviewLayout(typeof window === 'undefined' ? '' : window.location.search) }: { preview?: PreviewLayout | null }) {
+  const root = useRef<HTMLDivElement>(null)
+  const layout = preview ?? 'editorial'
+
+  useEffect(() => {
+    if (root.current) return setupPageMotion(root.current)
+  }, [layout])
+
   return (
-    <div className="site-shell">
+    <div className="site-shell" data-layout={layout} ref={root}>
+      <a className="skip-link" href="#main">Skip to content</a>
       <SiteHeader />
-      <main>
-        <HeroSection />
+      <main id="main" tabIndex={-1}>
+        <HeroSection layout={layout} />
         <WorkflowSection />
         <ProductSection />
         <PrivacySection />
         <DownloadSection />
       </main>
       <SiteFooter />
+      {preview && (
+        <aside className="preview-toolbar" aria-label="Layout preview">
+          <span>Layout preview</span>
+          <a href="?preview=editorial#top" aria-current={layout === 'editorial' ? 'page' : undefined}>1 · Editorial</a>
+          <a href="?preview=stage#top" aria-current={layout === 'stage' ? 'page' : undefined}>2 · Product stage</a>
+          <a href="?" aria-label="Exit layout preview">Exit preview</a>
+        </aside>
+      )}
     </div>
   )
 }
@@ -99,6 +117,7 @@ function SiteHeader() {
         <a href="#product">Product</a>
         <a href="#privacy">Privacy</a>
       </nav>
+      <DownloadButton />
     </header>
   )
 }
@@ -157,34 +176,32 @@ function DownloadButton({ macLabel }: { macLabel?: string }) {
   )
 }
 
-function HeroSection() {
+function HeroSection({ layout }: { layout: PreviewLayout }) {
   const { hero } = productMessaging
 
   return (
     <section className="hero-section" id="top" aria-labelledby="hero-title">
-      <div className="hero-copy">
-        <h1 id="hero-title">
-          <span>Your voice.</span>
-          <span>Your Mac.</span>
-        </h1>
-        <p className="hero-shortcut">{hero.subheadline}</p>
-        <DownloadButton macLabel={hero.primaryCta} />
-        <p className="hero-tagline">{hero.eyebrow}</p>
+      <div className="hero-art" aria-hidden="true">
+        <img className="hero-waveform" src={layout === 'stage' ? './saytype-stage-wave.webp' : './saytype-waveform.png'} alt="" />
       </div>
-
-      <div className="hero-visual" aria-label="Voice becomes text in SayType">
-        <img
-          className="hero-waveform"
-          src="./saytype-waveform.png"
-          alt=""
-          aria-hidden="true"
-        />
-        <img className="hero-cursor" src="./saytype-cursor.png" alt="" aria-hidden="true" />
+      <div className="hero-content">
+        <div className="hero-copy">
+          <h1 id="hero-title">
+            {layout === 'stage' ? <><span>Speak freely.</span><span>Keep your words close.</span></> :
+              <><span>Your voice.</span><span>Right where</span><span>you work.</span></>}
+          </h1>
+          {layout === 'editorial' && <p className="hero-shortcut">{hero.subheadline}</p>}
+          <p className="hero-description">Voice typing in the apps you already use.</p>
+          <div className="hero-actions">
+            <DownloadButton macLabel={hero.primaryCta} />
+            <a className="text-link" href="#workflow">{hero.secondaryCta}</a>
+          </div>
+          <p className="hero-tagline">{hero.eyebrow}</p>
+        </div>
         <figure className="hero-product">
-          <img
-            src="./saytype-settings.png"
-            alt="SayType settings showing the recording shortcut, permissions, language, and light theme"
-          />
+          <a href="./saytype-settings.png" target="_blank" rel="noreferrer" aria-label="View full-size SayType Dictation Settings screenshot">
+            <img src="./saytype-settings.png" alt="SayType main window showing Dictation Settings and available transcription engines" width="1152" height="768" />
+          </a>
         </figure>
       </div>
     </section>
@@ -196,13 +213,13 @@ function WorkflowSection() {
     <section className="workflow-section" id="workflow" aria-labelledby="workflow-title">
       <div className="section-kicker">
         <span>01</span>
-        <span>The gesture</span>
+        <span>One shortcut, every app</span>
       </div>
-      <div className="workflow-heading">
+      <div className="workflow-heading reveal-target">
         <h2 id="workflow-title">Hold. Speak. Release.</h2>
         <p>One physical gesture carries a thought all the way back to your cursor.</p>
       </div>
-      <ol className="workflow-list">
+      <ol className="workflow-list reveal-target">
         {workflowSteps.map((step) => (
           <li key={step.number}>
             <span className="step-number">{step.number}</span>
@@ -211,6 +228,7 @@ function WorkflowSection() {
           </li>
         ))}
       </ol>
+      <p className="workflow-footnote">On-device transcription <span>Optional cloud translation</span> Local History &amp; retry</p>
     </section>
   )
 }
@@ -223,37 +241,48 @@ function ProductSection() {
         <span>The product</span>
       </div>
       <div className="product-layout">
-        <div className="product-copy">
+        <div className="product-copy reveal-target">
           <h2 id="product-title">Ready when you are. Invisible when you’re not.</h2>
           <p>
-            Speak into the app you already use. SayType transcribes on your Mac and
-            puts the words at your cursor, without a cloud round trip.
+            In local mode, SayType turns speech into text on your Mac and inserts it at
+            your cursor. Choose your engine once, then keep working where you are.
           </p>
-          <div className="capability-list">
-            {featuredCapabilities.map((feature, index) => (
-              <article key={feature.id}>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <div>
-                  <h3>{feature.title}</h3>
-                  <p>{feature.description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
         </div>
-        <figure className="settings-figure">
-          <div className="settings-accent settings-accent-coral" />
+        <figure className="settings-figure reveal-target">
+          <a href="./saytype-app-settings.png" target="_blank" rel="noreferrer" aria-label="View full-size SayType App Settings screenshot">
           <img
-            src="./saytype-home.png"
-            alt="SayType ready to dictate with local model, microphone, and Accessibility ready"
+            src="./saytype-app-settings.png"
+            alt="SayType main window showing App Settings, appearance and software updates"
+            width="1152"
+            height="768"
+            loading="lazy"
+            decoding="async"
           />
-          <div className="settings-accent settings-accent-cyan" />
+          </a>
+          <figcaption>App Settings. Make yourself at home. <a href="./saytype-app-settings.png" target="_blank" rel="noreferrer">View full size</a></figcaption>
         </figure>
+        <div className="capability-list">
+          {featuredCapabilities.map((feature, index) => (
+            <article key={feature.id}>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
-      <div className="product-reassurance">
+      <details className="model-details">
+        <summary>Which local engine should I choose?</summary>
+        <p>Qwen3-ASR 0.6B is the recommended local model, with a ~1 GB one-time download.
+          Qwen3-ASR 1.7B and Nemotron live transcription are experimental options.
+          The larger Qwen model needs a ~2.52 GB download; performance varies with your hardware.</p>
+      </details>
+      <div className="product-reassurance reveal-target">
         <div className="history-reassurance">
           <span>Your transcript, saved locally</span>
-          <p>If an app blocks insertion, your transcript stays in History for easy copying.</p>
+          <p>Copy saved transcripts from History. If transcription fails and audio was saved, retry it with your current engine.</p>
         </div>
         <ul className="practical-details" aria-label="Practical desktop controls">
           {practicalDetails.map((detail) => (
@@ -264,6 +293,7 @@ function ProductSection() {
           ))}
         </ul>
       </div>
+      <p className="product-note">Change your input device in your operating system’s sound settings. Updates download in the background. Restart when you’re ready.</p>
     </section>
   )
 }
@@ -281,9 +311,9 @@ function PrivacySection() {
         <span>03</span>
         <span>Local by design</span>
       </div>
-      <div className="privacy-layout">
+      <div className="privacy-layout reveal-target">
         <div className="privacy-copy">
-          <p className="privacy-label">100% on-device transcription</p>
+          <p className="privacy-label">In local mode · on-device transcription</p>
           <h2 id="privacy-title">Your words stay on your Mac.</h2>
           <p>
             In local mode, audio is processed on your Mac and transcripts are saved
@@ -305,6 +335,7 @@ function PrivacySection() {
           <p className="cloud-disclosure">
             Optional cloud transcription and translation send audio to Groq or OpenAI using your own API key. Provider charges may apply.
           </p>
+          <p className="translation-note">Hold Shift+Alt to turn speech into English through a cloud provider. In local mode, translation setup asks for your consent before sending audio.</p>
         </div>
       </div>
       <p className="platform-note">
@@ -318,7 +349,7 @@ function DownloadSection() {
   return (
     <section className="download-section" id="download" aria-labelledby="download-title">
       <img className="download-waveform" src="./saytype-waveform.png" alt="" aria-hidden="true" />
-      <div className="download-copy">
+      <div className="download-copy reveal-target">
         <p>Offline dictation. No account. No subscription.</p>
         <h2 id="download-title">Your voice. No cloud required.</h2>
         <DownloadButton />

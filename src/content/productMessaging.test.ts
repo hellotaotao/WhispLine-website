@@ -5,7 +5,7 @@ const serializedMessaging = JSON.stringify(productMessaging).toLowerCase()
 
 describe('productMessaging', () => {
   it('matches the selected launch hero direction', () => {
-    expect(productMessaging.hero.headline).toBe('Your voice. Your Mac.')
+    expect(productMessaging.hero.headline).toBe('Your voice. Right where you work.')
     expect(productMessaging.hero.subheadline).toBe('Hold Ctrl+Shift, speak, release.')
     expect(productMessaging.hero.primaryCta).toBe('Download for Mac')
     expect(productMessaging.hero.secondaryCta).toBe('See how it works')
@@ -73,13 +73,11 @@ describe('productMessaging', () => {
     const groq = productMessaging.providers.find((provider) => provider.name === 'Groq')
     const openai = productMessaging.providers.find((provider) => provider.name === 'OpenAI')
 
-    expect(local?.models).toEqual(['Qwen3-ASR-0.6B Q8_0', '~1 GB one-time download'])
+    expect(local?.models).toEqual(['Qwen3-ASR 0.6B (recommended)', 'Qwen3-ASR 1.7B (experimental)'])
+    expect(productMessaging.providers.find((provider) => provider.name === 'Local Nemotron')?.note).toContain('Experimental')
+    expect(serializedMessaging).not.toContain('select a microphone from settings')
     expect(groq?.models).toEqual(['whisper-large-v3', 'whisper-large-v3-turbo'])
-    expect(openai?.models).toEqual([
-      'whisper-1',
-      'gpt-4o-transcribe',
-      'gpt-4o-mini-transcribe',
-    ])
+    expect(openai?.models).toEqual(['gpt-transcribe'])
   })
 
   it('is explicit about platforms, permissions, and the local-first privacy boundary', () => {

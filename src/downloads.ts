@@ -16,12 +16,10 @@ export const latestReleaseApiUrl =
   'https://api.github.com/repos/hellotaotao/saytype/releases/latest'
 export const releasePageUrl = 'https://github.com/hellotaotao/saytype/releases/latest'
 
-const releaseBaseUrl = 'https://github.com/hellotaotao/saytype/releases/download/v1.8.5'
-
 const fallbackDownloadUrls: Record<DownloadPlatform, string> = {
-  macos: `${releaseBaseUrl}/SayType_1.8.5_universal.dmg`,
-  windows: `${releaseBaseUrl}/SayType_1.8.5_x64-setup.exe`,
-  linux: `${releaseBaseUrl}/SayType_1.8.5_amd64.AppImage`,
+  macos: releasePageUrl,
+  windows: releasePageUrl,
+  linux: releasePageUrl,
 }
 
 const assetMatchers: Record<DownloadPlatform, RegExp[]> = {
