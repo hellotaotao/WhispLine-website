@@ -17,4 +17,11 @@ describe('product presentation and motion', () => {
     expect(css).not.toContain('infinite')
     expect(css).toContain('prefers-reduced-motion: reduce')
   })
+  it('separates screenshot parallax from entrance transforms and staggers title lines', () => {
+    expect(css).toMatch(/\.hero-product\s*\{[^}]*translate: 0 var\(--product-scroll/)
+    expect(css).toContain('animation-delay: 70ms')
+    expect(css).toContain('animation-delay: 140ms')
+    expect(css).toContain('--hero-enter-distance: 0px')
+  })
+
 })

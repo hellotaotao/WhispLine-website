@@ -248,7 +248,7 @@ function ProductSection() {
             your cursor. Choose your engine once, then keep working where you are.
           </p>
         </div>
-        <figure className="settings-figure reveal-target">
+        <figure className="settings-figure reveal-target" data-reveal-delay="120">
           <a href="./saytype-app-settings.png" target="_blank" rel="noreferrer" aria-label="View full-size SayType App Settings screenshot">
           <img
             src="./saytype-app-settings.png"
