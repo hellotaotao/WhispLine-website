@@ -7,12 +7,12 @@ vi.mock('./updates/UpdatesPage.tsx', () => ({ default: 'updates-page' }))
 
 afterEach(() => { vi.unstubAllGlobals(); vi.clearAllMocks() })
 
-async function mount(pathname: string, prerendered: boolean) {
+async function mount(pathname: string, prerendered: boolean, search = '') {
   vi.resetModules()
   createRoot.mockReturnValue({ render })
   const root = { hasAttribute: (name: string) => prerendered && name === 'data-prerendered' }
-  vi.stubGlobal('window', { location: { pathname } })
-  vi.stubGlobal('document', { getElementById: () => root })
+  vi.stubGlobal('window', { location: { pathname, search } })
+  vi.stubGlobal('document', { getElementById: () => root, documentElement: { lang: 'en' } })
   await import('./main')
   return root
 }
@@ -38,5 +38,36 @@ describe('browser entry', () => {
   it.each(['/', '/updates-extra', '/changelog/archive'])('does not match prefixes as update routes: %s', async (path) => {
     await mount(path, false)
     expect(render.mock.calls[0][0].props.children.type).toBe('homepage')
+  })
+})
+
+
+describe('bilingual browser entry', () => {
+  it.each([
+    ['/zh', 'homepage', undefined], ['/zh/', 'homepage', undefined],
+    ['/zh/updates', 'updates-page', 'updates'], ['/zh/changelog', 'updates-page', 'changelog'],
+  ])('hydrates the Chinese route %s using the route locale', async (path, type, logicalPage) => {
+    await mount(path!, true)
+    const page = hydrateRoot.mock.calls[0][1].props.children
+    expect(page.type).toBe(type)
+    expect(page.props.locale).toBe('zh')
+    expect(page.props.page).toBe(logicalPage)
+    expect(document.documentElement.lang).toBe('zh-CN')
+  })
+  it('hydrates the normal English homepage with deterministic layout props', async () => {
+    await mount('/', true)
+    const page = hydrateRoot.mock.calls[0][1].props.children
+    expect(page.props.locale).toBe('en')
+    expect(page.props.preview).toBeNull()
+  })
+  it.each(['stage', 'editorial'])('replaces homepage markup only for the explicit %s layout preview', async (layout) => {
+    await mount('/zh', true, `?preview=${layout}`)
+    expect(hydrateRoot).not.toHaveBeenCalled()
+    expect(render.mock.calls[0][0].props.children.props.preview).toBe(layout)
+    expect(render.mock.calls[0][0].props.children.props.locale).toBe('zh')
+  })
+  it('does not let homepage preview parameters disable hydration on an update page', async () => {
+    await mount('/zh/updates', true, '?preview=stage')
+    expect(hydrateRoot).toHaveBeenCalledOnce()
   })
 })

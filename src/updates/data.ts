@@ -1,3 +1,6 @@
+import { localizedPath, type Locale } from '../i18n'
+import chineseMilestones from '../content/milestones.zh.json'
+import chineseReleases from '../content/release-translations.zh.json'
 import releaseRecords from '../content/releases.json'
 import milestoneRecords from '../content/milestones.json'
 
@@ -31,10 +34,19 @@ export const milestones: Milestone[] = [...milestoneRecords].sort((a, b) => {
   return published(b.introducedVersion) - published(a.introducedVersion)
 })
 
+export function getMilestones(locale: Locale = 'en'): Milestone[] {
+  if (locale === 'en') return milestones
+  return milestones.map(original => chineseMilestones.find(record => record.id === original.id) ?? original)
+}
+
+export function getReleaseTranslation(version: string): string | undefined {
+  return (chineseReleases as Record<string, string>)[version]
+}
+
 export function releaseAnchor(version: string): string {
   return `release-${version.replace(/\./g, '-')}`
 }
 
-export function releaseHref(version: string): string {
-  return `/changelog#${releaseAnchor(version)}`
+export function releaseHref(version: string, locale: Locale = 'en'): string {
+  return `${localizedPath('changelog', locale)}#${releaseAnchor(version)}`
 }

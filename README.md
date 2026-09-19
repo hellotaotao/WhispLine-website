@@ -18,12 +18,18 @@ Copy is checked against `../SayType` at tag `v1.15.2`, especially `README.md`, `
 
 ## Layouts and preview
 
-The default `/` uses the selected editorial layout. Explicit preview links expose a small layout switcher:
+The default `/` (English) and `/zh` (Simplified Chinese) use the selected editorial layout. Explicit preview links expose a small layout switcher:
 
 - `/?preview=editorial` — first design, also the production default.
 - `/?preview=stage` — second design, centered product stage.
 
-Unknown or missing preview parameters always use the default without preview controls. Exit preview returns to `/`. Both layouts share the current product copy, real screenshots, lower sections and download behavior. There is **no A/B experiment, analytics SDK, event collection, random assignment, cookie or localStorage persistence**. The canonical URL is the production homepage.
+Unknown or missing preview parameters always use the default without preview controls. Exit preview returns to the current language homepage. Both layouts share the current product copy, real screenshots, lower sections and download behavior. There is **no A/B experiment, analytics SDK, event collection, random assignment, cookie or localStorage persistence**. Each preview uses the corresponding language homepage as its canonical URL.
+
+## Languages
+
+All six routes reuse `src/SiteHeader.tsx` with identical navigation and download controls. The separate EN / 中文 segmented control sits between navigation and download on desktop; mobile uses a shared logo/language row followed by navigation. The route is the language source of truth: English uses `/`, `/updates`, `/changelog`; Simplified Chinese uses `/zh`, `/zh/updates`, `/zh/changelog`. Navigation stays in the current language. Switching preserves the equivalent page, query string and hash, and refreshing preserves the language without cookies or browser-language redirects.
+
+Chinese milestones live in `src/content/milestones.zh.json` and share IDs and source versions with the English milestones. Chinese release history displays upstream Chinese notes first with English originals in a disclosure. The two English-only legacy releases use explicitly labeled website translations from `src/content/release-translations.zh.json`. Future English-only releases show an explicit fallback notice; raw release bodies remain unchanged. Real product screenshots retain the language in which they were captured.
 
 ## Product screenshots
 
@@ -39,7 +45,7 @@ The existing SayType logo, Apple logo and diagonal coral/cyan waveform are reuse
 ## Implementation
 
 - React, Vite and TypeScript; no additional runtime dependency for preview or motion.
-- `src/content/productMessaging.ts` holds the structured product copy.
+- `src/content/productMessaging.ts` holds the structured English product copy; `src/content/homeCopy.ts` holds its Chinese translations.
 - `src/preview.ts` only parses explicit preview parameters.
 - `src/motion.ts` scopes animation lifecycle to the page. CSS hero entrance and one-time section reveals use transform/opacity; only decorative wave art responds to mouse movement, by at most 10px horizontally and 7px vertically. No continuously moving app window or animation loop.
 - Reduced motion disables entrance, parallax, reveals, transitions and smooth scrolling. No hidden-by-default reveal content. Observers, animations, frame requests and listeners are cleaned up.
@@ -62,7 +68,7 @@ Preview both layouts at 320, 390, 768, 1100, 1280 and 1440px. Check anchor navig
 
 - `/updates` is a curated timeline of product capabilities, including introduction versions and later refinements. Content lives in `src/content/milestones.json`.
 - `/changelog` includes every published stable GitHub Release in `src/content/releases.json`, grouped by year and minor version. Patch notes use native disclosures; all text is present in the initial HTML. The English site shows English first and retains available Chinese notes in a separate disclosure.
-- `npm run build` pre-renders both routes, adds unique metadata and canonicals, and generates `sitemap.xml` and `robots.txt`. It checks the generated HTML and source links. Clean-URL HTML files and directory-index mirrors keep both slash variants readable in local preview; Vercel canonicalizes to the non-trailing-slash URL. No visitor-time GitHub or AI request is needed. The homepage remains the existing Vite app.
+- `npm run build` pre-renders all six language/page combinations, adds localized metadata, self-referencing canonicals and reciprocal `hreflang` links, and generates `sitemap.xml` and `robots.txt`. It checks the generated HTML and source links. Clean-URL HTML files and directory-index mirrors keep both slash variants readable in local preview; Vercel canonicalizes to the non-trailing-slash URL. No visitor-time GitHub or AI request is needed. All pages hydrate the static HTML; explicit layout previews are client-rendered.
 - Release bodies are preserved verbatim in the snapshot. The display removes repeated installer instructions and renders a safe Markdown subset without executable HTML. Historical notes describe that release, not current support or recommendations. Versions `v1.3.3` and `v1.3.4` have installer-only placeholder notes and are explicitly marked missing. The 2025 archive predates the current Tauri implementation.
 - Eight initial milestones were checked against the published release bodies. In particular, local transcription first appeared in **v1.4.0**, not the onboarding expansion in v1.5.0; saved-audio recovery began in **v1.8.0**, before its broader coverage in v1.13.3. No release-note claim is a substitute for real-device validation.
 
@@ -91,6 +97,6 @@ Configure `ANTHROPIC_API_KEY` as an Actions secret and `ANTHROPIC_MODEL` as an A
 npm run updates:draft -- --baseline /tmp/saytype-releases-before.json
 ```
 
-Only added/revised release notes plus the existing curated milestones are sent to the API. The command writes review-only proposals into `content-drafts/updates.json`; it never edits published milestones. It validates source versions, existing milestone IDs, schema and coverage. Review each proposed introduction against older releases before adding a new milestone. To publish a reviewed proposal, edit `src/content/milestones.json`, remove the consumed draft, and run the validation commands above. AI failures do not block release-note synchronization; no API call occurs when nothing changed.
+Only added/revised release notes plus the existing curated milestones are sent to the API. The command writes review-only proposals into `content-drafts/updates.json`; it never edits published milestones. It validates source versions, existing milestone IDs, schema and coverage. Review each proposed introduction against older releases before adding a new milestone. To publish a reviewed proposal, edit `src/content/milestones.json` and its matching Chinese entries in `src/content/milestones.zh.json`, remove the consumed draft, and run the validation commands above. AI failures do not block release-note synchronization; no API call occurs when nothing changed.
 
 After starting the production preview, run `npm run test:http -- http://127.0.0.1:4186` (use your preview port) to verify actual route responses. This catches SPA fallback responses that look correct after JavaScript but initially serve homepage metadata instead of release content.

@@ -1,4 +1,5 @@
-import { Fragment, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
+import type { Locale } from '../i18n'
 
 function inline(text: string): ReactNode[] {
   const tokens = /(`[^`]+`|\*\*[^*]+\*\*|(?<!!)\[[^\]]+\]\([^\s)]+\))/g
@@ -61,7 +62,7 @@ function markdown(lines: string[]): ReactNode[] {
   return blocks
 }
 
-export default function ReleaseNotes({ body }: { body: string }) {
+export default function ReleaseNotes({ body, locale = 'en', translation }: { body: string; locale?: Locale; translation?: string }) {
   const english: string[] = []
   const chinese: string[] = []
   let isChinese = false
@@ -83,10 +84,23 @@ export default function ReleaseNotes({ body }: { body: string }) {
     if (heading && /^english$/i.test(heading[2])) { isChinese = false; continue }
     ;(isChinese ? chinese : english).push(line)
   }
+  const hasChinese = chinese.some(line => line.trim())
+  const hasEnglish = english.some(line => line.trim())
+  if (locale === 'zh') {
+    const translated = hasChinese ? chinese : translation?.split('\n')
+    return (
+      <div className="release-notes" lang="zh-CN">
+        {!hasChinese && translation && <p className="translation-notice">网站翻译 · 英文原文见下方</p>}
+        {!translated && <p className="translation-notice">此版本暂无中文说明，以下为英文原文。</p>}
+        {translated ? markdown(translated) : <div lang="en">{markdown(english)}</div>}
+        {translated && hasEnglish && <details className="translated-notes" lang="en"><summary lang="zh-CN">英文原文</summary>{markdown(english)}</details>}
+      </div>
+    )
+  }
   return (
-    <div className="release-notes">
-      {markdown(english).map((block, index) => <Fragment key={index}>{block}</Fragment>)}
-      {chinese.some((line) => line.trim()) && (
+    <div className="release-notes" lang="en">
+      {markdown(english)}
+      {hasChinese && (
         <details className="translated-notes" lang="zh-CN">
           <summary>中文原文</summary>
           {markdown(chinese)}

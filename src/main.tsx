@@ -3,15 +3,19 @@ import { createRoot, hydrateRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import UpdatesPage from './updates/UpdatesPage.tsx'
+import { parseRoute } from './i18n'
+import { getPreviewLayout } from './preview'
 
-const path = window.location.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/'
-const page = path === '/updates' || path === '/changelog'
-  ? <UpdatesPage page={path === '/updates' ? 'updates' : 'changelog'} />
-  : <App />
+const route = parseRoute(window.location.pathname) ?? { locale: 'en', page: 'home' }
+const preview = route.page === 'home' ? getPreviewLayout(window.location.search ?? '') : null
+const page = route.page === 'home'
+  ? <App locale={route.locale} preview={preview} />
+  : <UpdatesPage page={route.page} locale={route.locale} />
 const root = document.getElementById('root')!
 const app = <StrictMode>{page}</StrictMode>
+document.documentElement.lang = route.locale === 'zh' ? 'zh-CN' : 'en'
 
-if (root.hasAttribute('data-prerendered')) {
+if (root.hasAttribute('data-prerendered') && preview === null) {
   hydrateRoot(root, app)
 } else {
   createRoot(root).render(app)

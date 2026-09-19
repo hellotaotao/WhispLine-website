@@ -1,8 +1,10 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { releases, getReleaseTranslation } from './data'
+import type { Locale } from '../i18n'
 import ReleaseNotes from './ReleaseNotes'
 
-const render = (body: string) => renderToStaticMarkup(<ReleaseNotes body={body} />)
+const render = (body: string, locale: Locale = 'en', translation?: string) => renderToStaticMarkup(<ReleaseNotes body={body} locale={locale} translation={translation} />)
 
 describe('ReleaseNotes', () => {
   it('renders headings, lists, emphasis, code and secure links', () => {
@@ -42,5 +44,49 @@ describe('ReleaseNotes', () => {
     expect(html).not.toContain('installer for your platform')
     expect(html).not.toContain('请下载对应平台')
     expect(html).toContain('新增下载进度')
+  })
+})
+
+ describe('localized release notes', () => {
+  it('shows original Chinese first on Chinese pages and folds the English original', () => {
+    const html = render('## English\n- Better capture.\n## 中文\n- 更好的录音。', 'zh')
+    expect(html.indexOf('更好的录音。')).toBeLessThan(html.indexOf('<details'))
+    expect(html).toMatch(/<details[^>]*lang="en"[\s\S]*<summary[^>]*>英文原文<\/summary>[\s\S]*Better capture/)
+  })
+  it('labels website translations and preserves their source', () => {
+    const html = render('- Older engine.', 'zh', '- 早期引擎。')
+    expect(html).toContain('网站翻译')
+    expect(html.indexOf('早期引擎。')).toBeLessThan(html.indexOf('<details'))
+    expect(html).toContain('Older engine.')
+  })
+  it('explicitly falls back to English rather than fabricating Chinese', () => {
+    const html = render('- Future release.', 'zh')
+    expect(html).toContain('此版本暂无中文说明，以下为英文原文。')
+    expect(html).toContain('Future release.')
+  })
+  it('prefers source Chinese over a website translation', () => {
+    const html = render('## English\n- Source.\n## 中文\n- 原文。', 'zh', '- 译文。')
+    expect(html).toContain('原文。')
+    expect(html).not.toContain('译文。')
+  })
+})
+
+describe('published Chinese release coverage', () => {
+  it('has Chinese content for every currently available release without changing its source', () => {
+    for (const release of releases.filter(record => record.notesStatus === 'available')) {
+      const original = release.body
+      const html = render(release.body, 'zh', getReleaseTranslation(release.version))
+      expect(html, release.version).not.toContain('此版本暂无中文说明')
+      expect(html.slice(0, html.indexOf('<details')), release.version).toMatch(/[\u4e00-\u9fff]/)
+      expect(release.body).toBe(original)
+      if (release.version === '1.0.66' || release.version === '1.0.67') expect(html).toContain('网站翻译')
+      else expect(html).not.toContain('网站翻译')
+    }
+  })
+  it('preserves download removal and HTML escaping on Chinese pages too', () => {
+    const html = render('## English\n- Safe.\n## 中文\n- <script>危险</script>\n## 下载\n请下载对应平台的安装包。', 'zh')
+    expect(html).toContain('&lt;script&gt;危险&lt;/script&gt;')
+    expect(html).not.toContain('<script>')
+    expect(html).not.toContain('请下载对应平台')
   })
 })

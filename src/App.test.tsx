@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 
 describe('SayType launch page', () => {
@@ -24,15 +24,15 @@ describe('SayType launch page', () => {
   it('uses the real brand, product, and waveform assets', () => {
     const html = renderToStaticMarkup(<App />)
 
-    expect(html).toContain('src="./saytype-icon.png"')
-    expect(html).toContain('src="./saytype-waveform.png"')
-    expect(html).toContain('src="./saytype-settings.png"')
+    expect(html).toContain('src="/saytype-icon.png"')
+    expect(html).toContain('src="/saytype-waveform.png"')
+    expect(html).toContain('src="/saytype-settings.png"')
   })
 
   it('uses the whole normally proportioned Settings window in the hero', () => {
     const html = renderToStaticMarkup(<App />)
     const hero = html.match(/<section class="hero-section"[\s\S]*?<\/section>/)?.[0] ?? ''
-    expect(hero).toContain('src="./saytype-settings.png"')
+    expect(hero).toContain('src="/saytype-settings.png"')
     expect(hero).toContain('width="1152" height="768"')
     expect(hero).not.toContain('saytype-home.png')
     expect(hero).not.toContain('loading="lazy"')
@@ -41,7 +41,7 @@ describe('SayType launch page', () => {
   it('shows real App Settings before capabilities with a full-size link', () => {
     const html = renderToStaticMarkup(<App />)
     const product = html.match(/<section class="product-section"[\s\S]*?<\/section>/)?.[0] ?? ''
-    const screenshotPosition = product.indexOf('src="./saytype-app-settings.png"')
+    const screenshotPosition = product.indexOf('src="/saytype-app-settings.png"')
     expect(screenshotPosition).toBeGreaterThan(-1)
     expect(product.indexOf('class="capability-list"')).toBeGreaterThan(screenshotPosition)
     expect(product).toContain('width="1152" height="768"')
@@ -59,7 +59,7 @@ describe('SayType launch page', () => {
     const html = renderToStaticMarkup(<App preview="stage" />)
     expect(html).toContain('data-layout="stage"')
     expect(html).toContain('Speak freely.')
-    expect(html).toContain('src="./saytype-stage-wave.webp"')
+    expect(html).toContain('src="/saytype-stage-wave.webp"')
     expect(html).toContain('Keep your words close.')
     expect(html).toContain('Layout preview')
     expect(html).toContain('href="?preview=editorial#top"')
@@ -126,5 +126,40 @@ describe('SayType launch page', () => {
     expect(html).toContain('Apple Silicon recommended for local dictation')
     expect(html).toContain('~1 GB download for Qwen3-ASR 0.6B')
     expect(html).toContain('Microphone and Accessibility permissions required')
+  })
+})
+
+
+describe('localized launch page', () => {
+  afterEach(() => { vi.unstubAllGlobals() })
+
+  it('translates every section and navigation into Chinese', () => {
+    const html = renderToStaticMarkup(<App locale="zh" preview={null} />)
+    for (const text of ['跳到正文', '按住，说话，松开。', '随时待命，不打扰工作。', '你的话，留在你的 Mac。', '用声音输入，无需云端。', '产品更新', '本地转写无需账号或 API key', 'Windows 和 Linux 版本仍处于实验阶段', '查看原图']) {
+      expect(html).toContain(text)
+    }
+    expect(html).toContain('href="/zh/updates"')
+    expect(html).toContain('href="#workflow"')
+    expect(html).toContain('aria-label="主要导航"')
+    expect(html).toContain('aria-label="下载 Mac 版 SayType"')
+    expect(html).toContain('音频发送给 Groq 或 OpenAI')
+    expect(html).toContain('Qwen3-ASR 1.7B 和 Nemotron 实时转写属于实验性选项')
+    expect(html).not.toContain('Your voice.')
+    expect(html).not.toMatch(/(?:src|href)="\.\//)
+  })
+
+  it('localizes preview controls without changing the real screenshots', () => {
+    const html = renderToStaticMarkup(<App locale="zh" preview="stage" />)
+    expect(html).toContain('布局预览')
+    expect(html).toContain('退出预览')
+    expect(html).toContain('src="/saytype-settings.png"')
+  })
+
+  it('keeps the initial download markup deterministic across visitor platforms', () => {
+    const baseline = renderToStaticMarkup(<App preview={null} />)
+    for (const platform of ['Win32', 'Linux x86_64']) {
+      vi.stubGlobal('navigator', { platform, userAgent: platform })
+      expect(renderToStaticMarkup(<App preview={null} />)).toBe(baseline)
+    }
   })
 })

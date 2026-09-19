@@ -1,17 +1,13 @@
 import './App.css'
 import './updates/UpdatesPage.css'
-import { useEffect, useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useRef } from 'react'
 import { getPreviewLayout, type PreviewLayout } from './preview'
 import { setupPageMotion } from './motion'
-import { productMessaging } from './content/productMessaging'
-import {
-  detectDownloadPlatform,
-  getFallbackDownloadUrl,
-  releasePageUrl,
-  resolveLatestDownloadUrl,
-  type DownloadPlatform,
-} from './downloads'
-
+import { homeCopy } from './content/homeCopy'
+import { localizedPath, type Locale } from './i18n'
+import SiteHeader from './SiteHeader'
+import DownloadButton from './DownloadButton'
+import { releasePageUrl } from './downloads'
 const workflowSteps = [
   {
     number: '01',
@@ -28,53 +24,30 @@ const workflowSteps = [
     title: 'Release',
     detail: 'Your transcript returns to the text field that already has focus.',
   },
-]
+] as const
 
-const featureIds = [
-  'global-hotkey',
-  'active-app-insertion',
-  'engine-choice',
-  'translation',
-]
-
-const featuredCapabilities = featureIds.flatMap((id) => {
-  const feature = productMessaging.features.find((item) => item.id === id)
-  return feature ? [feature] : []
-})
+const featuredCapabilities = [
+  { id: 'global-hotkey', title: 'Global hold-to-record hotkey', description: 'Hold Ctrl+Shift to record, release to stop, and keep your hands near the keyboard.' },
+  { id: 'active-app-insertion', title: 'Active-app text insertion', description: 'Transcribed text is sent back to the app and text field that already has your cursor.' },
+  { id: 'engine-choice', title: '100% local transcription', description: 'Turn speech into text on your Mac. In local mode, your audio and transcript stay on your device.' },
+  { id: 'translation', title: 'Speak it. Write it in English.', description: 'Hold Shift+Alt to translate speech into English through a cloud provider using your own API key.' },
+] as const
 
 const practicalDetails = [
   { label: 'Input', detail: 'Uses your system’s default microphone' },
   { label: 'Control', detail: 'Press Escape to cancel' },
   { label: 'Presence', detail: 'Runs quietly from the menu bar' },
-]
+] as const
 
 const downloadRequirements = [
   'macOS primary',
   'Apple Silicon recommended for local dictation',
   '~1 GB download for Qwen3-ASR 0.6B',
   'Microphone and Accessibility permissions required',
-]
+] as const
 
-const downloadPlatforms: Record<DownloadPlatform, { label: string; name: string }> = {
-  macos: { label: 'Download for Mac', name: 'Mac' },
-  windows: { label: 'Download for Windows', name: 'Windows' },
-  linux: { label: 'Download for Linux', name: 'Linux' },
-}
-
-function getCurrentDownloadPlatform(): DownloadPlatform | null {
-  if (typeof navigator === 'undefined') {
-    return 'macos'
-  }
-
-  const navigatorWithUserAgentData = navigator as Navigator & {
-    userAgentData?: { platform?: string }
-  }
-  const platform = navigatorWithUserAgentData.userAgentData?.platform ?? navigator.platform
-
-  return detectDownloadPlatform(platform, navigator.userAgent)
-}
-
-function App({ preview = getPreviewLayout(typeof window === 'undefined' ? '' : window.location.search) }: { preview?: PreviewLayout | null }) {
+function App({ locale = 'en', preview = getPreviewLayout(typeof window === 'undefined' ? '' : window.location.search) }: { locale?: Locale; preview?: PreviewLayout | null }) {
+  const t = homeCopy(locale)
   const root = useRef<HTMLDivElement>(null)
   const layout = preview ?? 'editorial'
 
@@ -83,126 +56,54 @@ function App({ preview = getPreviewLayout(typeof window === 'undefined' ? '' : w
   }, [layout])
 
   return (
-    <div className="site-shell" data-layout={layout} ref={root}>
-      <a className="skip-link" href="#main">Skip to content</a>
-      <SiteHeader />
+    <div className="site-shell" data-layout={layout} lang={locale === 'zh' ? 'zh-CN' : 'en'} ref={root}>
+      <a className="skip-link" href="#main">{t('Skip to content')}</a>
+      <SiteHeader locale={locale} page="home" />
       <main id="main" tabIndex={-1}>
-        <HeroSection layout={layout} />
-        <WorkflowSection />
-        <ProductSection />
-        <PrivacySection />
-        <DownloadSection />
+        <HeroSection locale={locale} layout={layout} />
+        <WorkflowSection locale={locale} />
+        <ProductSection locale={locale} />
+        <PrivacySection locale={locale} />
+        <DownloadSection locale={locale} />
       </main>
-      <SiteFooter />
+      <SiteFooter locale={locale} />
       {preview && (
-        <aside className="preview-toolbar" aria-label="Layout preview">
-          <span>Layout preview</span>
-          <a href="?preview=editorial#top" aria-current={layout === 'editorial' ? 'page' : undefined}>1 · Editorial</a>
-          <a href="?preview=stage#top" aria-current={layout === 'stage' ? 'page' : undefined}>2 · Product stage</a>
-          <a href="?" aria-label="Exit layout preview">Exit preview</a>
+        <aside className="preview-toolbar" aria-label={t('Layout preview')}>
+          <span>{t('Layout preview')}</span>
+          <a href="?preview=editorial#top" aria-current={layout === 'editorial' ? 'page' : undefined}>{t('1 · Editorial')}</a>
+          <a href="?preview=stage#top" aria-current={layout === 'stage' ? 'page' : undefined}>{t('2 · Product stage')}</a>
+          <a href="?" aria-label={t('Exit layout preview')}>{t('Exit preview')}</a>
         </aside>
       )}
     </div>
   )
 }
 
-function SiteHeader() {
-  return (
-    <header className="site-header" aria-label="Primary navigation">
-      <a className="brand-lockup" href="#top" aria-label="SayType home">
-        <img src="./saytype-icon.png" alt="" width="48" height="48" />
-        <span>SayType</span>
-      </a>
-      <nav className="nav-links" aria-label="Page sections">
-        <a href="#workflow">How it works</a>
-        <a href="#product">Product</a>
-        <a href="#privacy">Privacy</a>
-        <a className="updates-nav-link" href="/updates">Updates</a>
-      </nav>
-      <DownloadButton />
-    </header>
-  )
-}
-
-function DownloadButton({ macLabel }: { macLabel?: string }) {
-  const [platform] = useState(getCurrentDownloadPlatform)
-  const [isResolving, setIsResolving] = useState(false)
-  const platformDetails = platform ? downloadPlatforms[platform] : null
-  const label =
-    platform === 'macos' && macLabel
-      ? macLabel
-      : platformDetails?.label ?? 'View downloads'
-  const href = platform ? getFallbackDownloadUrl(platform) : releasePageUrl
-
-  const handleClick = async (event: MouseEvent<HTMLAnchorElement>) => {
-    if (
-      !platform ||
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-    ) {
-      return
-    }
-
-    event.preventDefault()
-    if (isResolving) {
-      return
-    }
-
-    setIsResolving(true)
-    const downloadUrl = await resolveLatestDownloadUrl(platform)
-    window.location.assign(downloadUrl)
-  }
-
-  return (
-    <a
-      className="download-button"
-      href={href}
-      aria-label={
-        platformDetails ? `Download SayType for ${platformDetails.name}` : 'View SayType downloads'
-      }
-      aria-busy={isResolving || undefined}
-      onClick={handleClick}
-    >
-      {platform === 'macos' ? (
-        <img src="./apple-logo.png" alt="" width="26" height="27" />
-      ) : (
-        <svg className="download-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" />
-        </svg>
-      )}
-      <span>{isResolving ? 'Preparing download…' : label}</span>
-    </a>
-  )
-}
-
-function HeroSection({ layout }: { layout: PreviewLayout }) {
-  const { hero } = productMessaging
+function HeroSection({ locale, layout }: { locale: Locale; layout: PreviewLayout }) {
+  const t = homeCopy(locale)
 
   return (
     <section className="hero-section" id="top" aria-labelledby="hero-title">
       <div className="hero-art" aria-hidden="true">
-        <img className="hero-waveform" src={layout === 'stage' ? './saytype-stage-wave.webp' : './saytype-waveform.png'} alt="" />
+        <img className="hero-waveform" src={layout === 'stage' ? '/saytype-stage-wave.webp' : '/saytype-waveform.png'} alt="" />
       </div>
       <div className="hero-content">
         <div className="hero-copy">
           <h1 id="hero-title">
-            {layout === 'stage' ? <><span>Speak freely.</span><span>Keep your words close.</span></> :
-              <><span>Your voice.</span><span>Right where</span><span>you work.</span></>}
+            {layout === 'stage' ? <><span>{t('Speak freely.')}</span><span>{t('Keep your words close.')}</span></> :
+              <><span>{t('Your voice.')}</span><span>{t('Right where')}</span><span>{t('you work.')}</span></>}
           </h1>
-          {layout === 'editorial' && <p className="hero-shortcut">{hero.subheadline}</p>}
-          <p className="hero-description">Voice typing in the apps you already use.</p>
+          {layout === 'editorial' && <p className="hero-shortcut">{t('Hold Ctrl+Shift, speak, release.')}</p>}
+          <p className="hero-description">{t('Voice typing in the apps you already use.')}</p>
           <div className="hero-actions">
-            <DownloadButton macLabel={hero.primaryCta} />
-            <a className="text-link" href="#workflow">{hero.secondaryCta}</a>
+            <DownloadButton locale={locale} />
+            <a className="text-link" href="#workflow">{t('See how it works')}</a>
           </div>
-          <p className="hero-tagline">{hero.eyebrow}</p>
+          <p className="hero-tagline">{t('Local transcription. No account. No subscription.')}</p>
         </div>
         <figure className="hero-product">
-          <a href="./saytype-settings.png" target="_blank" rel="noreferrer" aria-label="View full-size SayType Dictation Settings screenshot">
-            <img src="./saytype-settings.png" alt="SayType main window showing Dictation Settings and available transcription engines" width="1152" height="768" />
+          <a href="/saytype-settings.png" target="_blank" rel="noreferrer" aria-label={t('View full-size SayType Dictation Settings screenshot')}>
+            <img src="/saytype-settings.png" alt={t('SayType main window showing Dictation Settings and available transcription engines')} width="1152" height="768" />
           </a>
         </figure>
       </div>
@@ -210,154 +111,145 @@ function HeroSection({ layout }: { layout: PreviewLayout }) {
   )
 }
 
-function WorkflowSection() {
+function WorkflowSection({ locale }: { locale: Locale }) {
+  const t = homeCopy(locale)
   return (
     <section className="workflow-section" id="workflow" aria-labelledby="workflow-title">
       <div className="section-kicker">
         <span>01</span>
-        <span>One shortcut, every app</span>
+        <span>{t('One shortcut, every app')}</span>
       </div>
       <div className="workflow-heading reveal-target">
-        <h2 id="workflow-title">Hold. Speak. Release.</h2>
-        <p>One physical gesture carries a thought all the way back to your cursor.</p>
+        <h2 id="workflow-title">{t('Hold. Speak. Release.')}</h2>
+        <p>{t('One physical gesture carries a thought all the way back to your cursor.')}</p>
       </div>
       <ol className="workflow-list reveal-target">
         {workflowSteps.map((step) => (
           <li key={step.number}>
             <span className="step-number">{step.number}</span>
-            <h3>{step.title}</h3>
-            <p>{step.detail}</p>
+            <h3>{t(step.title)}</h3>
+            <p>{t(step.detail)}</p>
           </li>
         ))}
       </ol>
-      <p className="workflow-footnote">On-device transcription <span>Optional cloud translation</span> Local History &amp; retry</p>
+      <p className="workflow-footnote">{t('On-device transcription')} <span>{t('Optional cloud translation')}</span> {t('Local History & retry')}</p>
     </section>
   )
 }
 
-function ProductSection() {
+function ProductSection({ locale }: { locale: Locale }) {
+  const t = homeCopy(locale)
   return (
     <section className="product-section" id="product" aria-labelledby="product-title">
       <div className="section-kicker">
         <span>02</span>
-        <span>The product</span>
+        <span>{t('The product')}</span>
       </div>
       <div className="product-layout">
         <div className="product-copy reveal-target">
-          <h2 id="product-title">Ready when you are. Invisible when you’re not.</h2>
-          <p>
-            In local mode, SayType turns speech into text on your Mac and inserts it at
-            your cursor. Choose your engine once, then keep working where you are.
-          </p>
+          <h2 id="product-title">{t('Ready when you are. Invisible when you’re not.')}</h2>
+          <p>{t('In local mode, SayType turns speech into text on your Mac and inserts it at your cursor. Choose your engine once, then keep working where you are.')}</p>
         </div>
         <figure className="settings-figure reveal-target" data-reveal-delay="120">
-          <a href="./saytype-app-settings.png" target="_blank" rel="noreferrer" aria-label="View full-size SayType App Settings screenshot">
+          <a href="/saytype-app-settings.png" target="_blank" rel="noreferrer" aria-label={t('View full-size SayType App Settings screenshot')}>
           <img
-            src="./saytype-app-settings.png"
-            alt="SayType main window showing App Settings, appearance and software updates"
+            src="/saytype-app-settings.png"
+            alt={t('SayType main window showing App Settings, appearance and software updates')}
             width="1152"
             height="768"
             loading="lazy"
             decoding="async"
           />
           </a>
-          <figcaption>App Settings. Make yourself at home. <a href="./saytype-app-settings.png" target="_blank" rel="noreferrer">View full size</a></figcaption>
+          <figcaption>{t('App Settings. Make yourself at home.')} <a href="/saytype-app-settings.png" target="_blank" rel="noreferrer">{t('View full size')}</a></figcaption>
         </figure>
         <div className="capability-list">
           {featuredCapabilities.map((feature, index) => (
             <article key={feature.id}>
               <span>{String(index + 1).padStart(2, '0')}</span>
               <div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
+                <h3>{t(feature.title)}</h3>
+                <p>{t(feature.description)}</p>
               </div>
             </article>
           ))}
         </div>
       </div>
       <details className="model-details">
-        <summary>Which local engine should I choose?</summary>
-        <p>Qwen3-ASR 0.6B is the recommended local model, with a ~1 GB one-time download.
-          Qwen3-ASR 1.7B and Nemotron live transcription are experimental options.
-          The larger Qwen model needs a ~2.52 GB download; performance varies with your hardware.</p>
+        <summary>{t('Which local engine should I choose?')}</summary>
+        <p>{t('Qwen3-ASR 0.6B is the recommended local model, with a ~1 GB one-time download. Qwen3-ASR 1.7B and Nemotron live transcription are experimental options. The larger Qwen model needs a ~2.52 GB download; performance varies with your hardware.')}</p>
       </details>
       <div className="product-reassurance reveal-target">
         <div className="history-reassurance">
-          <span>Your transcript, saved locally</span>
-          <p>Copy saved transcripts from History. If transcription fails and audio was saved, retry it with your current engine.</p>
+          <span>{t('Your transcript, saved locally')}</span>
+          <p>{t('Copy saved transcripts from History. If transcription fails and audio was saved, retry it with your current engine.')}</p>
         </div>
-        <ul className="practical-details" aria-label="Practical desktop controls">
+        <ul className="practical-details" aria-label={t('Practical desktop controls')}>
           {practicalDetails.map((detail) => (
-            <li key={detail.label}>
-              <span>{detail.label}</span>
-              <strong>{detail.detail}</strong>
+            <li key={t(detail.label)}>
+              <span>{t(detail.label)}</span>
+              <strong>{t(detail.detail)}</strong>
             </li>
           ))}
         </ul>
       </div>
-      <p className="product-note">Change your input device in your operating system’s sound settings. Updates download in the background. Restart when you’re ready.</p>
+      <p className="product-note">{t('Change your input device in your operating system’s sound settings. Updates download in the background. Restart when you’re ready.')}</p>
     </section>
   )
 }
 
-function PrivacySection() {
+function PrivacySection({ locale }: { locale: Locale }) {
+  const t = homeCopy(locale)
   const localBenefits = [
     { title: 'Works offline', detail: 'Download a local model once, then transcribe without an internet connection.' },
     { title: 'No subscription or word limits', detail: 'Local transcription needs no account or API key. No weekly allowance and no per-minute service fees.' },
     { title: 'Transcribe first. Edit on your terms.', detail: 'Get your words as text. You decide whether to rewrite them, which tool to use, and what to share.' },
-  ]
+  ] as const
 
   return (
     <section className="privacy-section" id="privacy" aria-labelledby="privacy-title">
       <div className="section-kicker">
         <span>03</span>
-        <span>Local by design</span>
+        <span>{t('Local by design')}</span>
       </div>
       <div className="privacy-layout reveal-target">
         <div className="privacy-copy">
-          <p className="privacy-label">In local mode · on-device transcription</p>
-          <h2 id="privacy-title">Your words stay on your Mac.</h2>
-          <p>
-            In local mode, audio is processed on your Mac and transcripts are saved
-            there. Neither is uploaded for transcription. Your everyday thoughts
-            do not need a trip to someone else’s server.
-          </p>
+          <p className="privacy-label">{t('In local mode · on-device transcription')}</p>
+          <h2 id="privacy-title">{t('Your words stay on your Mac.')}</h2>
+          <p>{t('In local mode, audio is processed on your Mac and transcripts are saved there. Neither is uploaded for transcription. Your everyday thoughts do not need a trip to someone else’s server.')}</p>
         </div>
         <div className="engine-panel">
-          <div className="engine-list" aria-label="Benefits of local transcription">
+          <div className="engine-list" aria-label={t('Benefits of local transcription')}>
             {localBenefits.map((benefit) => (
-              <article key={benefit.title}>
+              <article key={t(benefit.title)}>
                 <div>
-                  <h3>{benefit.title}</h3>
+                  <h3>{t(benefit.title)}</h3>
                 </div>
-                <p>{benefit.detail}</p>
+                <p>{t(benefit.detail)}</p>
               </article>
             ))}
           </div>
-          <p className="cloud-disclosure">
-            Optional cloud transcription and translation send audio to Groq or OpenAI using your own API key. Provider charges may apply.
-          </p>
-          <p className="translation-note">Hold Shift+Alt to turn speech into English through a cloud provider. In local mode, translation setup asks for your consent before sending audio.</p>
+          <p className="cloud-disclosure">{t('Optional cloud transcription and translation send audio to Groq or OpenAI using your own API key. Provider charges may apply.')}</p>
+          <p className="translation-note">{t('Hold Shift+Alt to turn speech into English through a cloud provider. In local mode, translation setup asks for your consent before sending audio.')}</p>
         </div>
       </div>
-      <p className="platform-note">
-        macOS is the primary tested path. Windows and Linux builds remain experimental.
-      </p>
+      <p className="platform-note">{t('macOS is the primary tested path. Windows and Linux builds remain experimental.')}</p>
     </section>
   )
 }
 
-function DownloadSection() {
+function DownloadSection({ locale }: { locale: Locale }) {
+  const t = homeCopy(locale)
   return (
     <section className="download-section" id="download" aria-labelledby="download-title">
-      <img className="download-waveform" src="./saytype-waveform.png" alt="" aria-hidden="true" />
+      <img className="download-waveform" src="/saytype-waveform.png" alt="" aria-hidden="true" />
       <div className="download-copy reveal-target">
-        <p>Offline dictation. No account. No subscription.</p>
-        <h2 id="download-title">Your voice. No cloud required.</h2>
-        <DownloadButton />
-        <ul className="download-requirements" aria-label="Download requirements">
+        <p>{t('Offline dictation. No account. No subscription.')}</p>
+        <h2 id="download-title">{t('Your voice. No cloud required.')}</h2>
+        <DownloadButton locale={locale} />
+        <ul className="download-requirements" aria-label={t('Download requirements')}>
           {downloadRequirements.map((requirement) => (
-            <li key={requirement}>{requirement}</li>
+            <li key={t(requirement)}>{t(requirement)}</li>
           ))}
         </ul>
       </div>
@@ -365,16 +257,17 @@ function DownloadSection() {
   )
 }
 
-function SiteFooter() {
+function SiteFooter({ locale }: { locale: Locale }) {
+  const t = homeCopy(locale)
   return (
     <footer className="site-footer">
-      <a className="brand-lockup" href="#top" aria-label="Back to top">
-        <img src="./saytype-icon.png" alt="" width="42" height="42" />
+      <a className="brand-lockup" href="#top" aria-label={t('Back to top')}>
+        <img src="/saytype-icon.png" alt="" width="42" height="42" />
         <span>SayType</span>
       </a>
-      <p>Voice to text. On your device.</p>
-      <a href="/updates">Updates</a>
-      <a href={releasePageUrl}>GitHub releases ↗</a>
+      <p>{t('Voice to text. On your device.')}</p>
+      <a href={localizedPath('updates', locale)}>{t('Updates')}</a>
+      <a href={releasePageUrl}>{t('GitHub releases ↗')}</a>
     </footer>
   )
 }

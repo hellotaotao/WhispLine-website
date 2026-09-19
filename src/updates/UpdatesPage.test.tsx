@@ -7,8 +7,10 @@ vi.mock('./data', () => ({
     { version: '0.1.0', publishedAt: '2025-09-18T00:00:00Z', updatedAt: '2025-09-18T00:00:00Z', url: 'https://example.com/v0.1.0', body: 'Legacy capture.', notesStatus: 'available' },
   ],
   milestones: [{ id: 'capture', title: 'Capture that keeps up', category: 'Dictation', summary: 'A better recording path.', introducedVersion: '1.2.0', details: ['Capture on your device.'], scope: 'macOS', evolution: [{ version: '1.2.1', description: 'Improved recovery.' }] }],
+  getMilestones: (locale: string) => [{ id: 'capture', title: locale === 'zh' ? '跟得上你的录音' : 'Capture that keeps up', category: locale === 'zh' ? '听写' : 'Dictation', summary: 'A better recording path.', introducedVersion: '1.2.0', details: ['Capture on your device.'], scope: 'macOS', evolution: [{ version: '1.2.1', description: 'Improved recovery.' }] }],
+  getReleaseTranslation: () => undefined,
   releaseAnchor: (version: string) => `v${version}`,
-  releaseHref: (version: string) => `/changelog#v${version}`,
+  releaseHref: (version: string, locale: string) => `${locale === 'zh' ? '/zh' : ''}/changelog#v${version}`,
 }))
 import UpdatesPage from './UpdatesPage'
 
@@ -37,6 +39,24 @@ describe('UpdatesPage', () => {
     expect(html).toContain('href="https://example.com/v1.2.0"')
     expect(html).toContain('19 Sep 2026')
     expect(html).toContain('<details')
+    expect(html).toContain('href="#year-2025"')
+  })
+})
+
+describe('Chinese updates pages', () => {
+  it('localizes the site shell, dates, history links and milestone content', () => {
+    const html = renderToStaticMarkup(<UpdatesPage page="updates" locale="zh" />)
+    for (const text of ['跟得上你的录音', '首次推出', '后续改进', '2026年9月18日', '重要更新', '完整日志', '跳至正文', '网站语言']) expect(html).toContain(text)
+    for (const href of ['/zh', '/zh/updates', '/zh/changelog', '/zh#download', '/zh/changelog#v1.2.0']) expect(html).toContain(`href="${href}"`)
+    expect(html).toContain('src="/saytype-icon.png"')
+    expect(html).toContain('href="/updates"')
+    expect(html).not.toContain('First introduced')
+  })
+  it('localizes archive labels, missing notes and legacy notices while retaining sources', () => {
+    const html = renderToStaticMarkup(<UpdatesPage page="changelog" locale="zh" />)
+    for (const text of ['1.2 系列', '最新版本', '发布年份', '此版本暂无发布说明', '历史版本', '此版本暂无中文说明', 'GitHub 原始发布记录', '2026年9月19日']) expect(html).toContain(text)
+    expect(html).toContain('href="https://example.com/v1.2.0"')
+    expect(html).toContain('id="v1.2.1"')
     expect(html).toContain('href="#year-2025"')
   })
 })

@@ -25,3 +25,27 @@ test('sitemap exposes homepage and both independent views without artificial dat
   for(const url of ['https://saytype.taotao.au/','https://saytype.taotao.au/updates','https://saytype.taotao.au/changelog']) assert.ok(xml.includes(`<loc>${url}</loc>`));
   assert.ok(!xml.includes('<lastmod>'));
 });
+
+test('serves six language-specific metadata documents with reciprocal alternatives', () => {
+  for (const page of ['home','updates','changelog']) {
+    for (const locale of ['en','zh']) {
+      const meta = pageMetadata(page,locale);
+      const path = `${locale === 'zh' ? '/zh' : ''}${page === 'home' ? '' : `/${page}`}` || '/';
+      assert.equal(meta.url, `https://saytype.taotao.au${path}`);
+      const html = renderDocument(template,'<main>Localized content</main>',page,locale);
+      assert.ok(html.includes(`<html lang="${locale === 'zh' ? 'zh-CN' : 'en'}"`));
+      assert.ok(html.includes(`rel="canonical" href="${meta.url}"`));
+      for (const language of ['en','zh-CN','x-default']) assert.ok(html.includes(`hreflang="${language}"`));
+      assert.equal((html.match(/hreflang=/g)||[]).length,3);
+      assert.ok(html.includes(locale === 'zh' ? 'og:locale" content="zh_CN' : 'og:locale" content="en_US'));
+      assert.equal((html.match(/<title>/g)||[]).length,1);
+    }
+    assert.notEqual(pageMetadata(page,'zh').title,pageMetadata(page,'en').title);
+  }
+  assert.throws(()=>pageMetadata('home','fr'));
+});
+test('sitemap includes both languages for every page', () => {
+  const sitemap = renderSitemap();
+  assert.equal((sitemap.match(/<loc>/g)||[]).length,6);
+  for (const path of ['/zh','/zh/updates','/zh/changelog']) assert.ok(sitemap.includes(`<loc>https://saytype.taotao.au${path}</loc>`));
+});

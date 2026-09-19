@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { releases, milestones, releaseAnchor, releaseHref } from './data'
+import { releases, milestones, getMilestones, getReleaseTranslation, releaseAnchor, releaseHref } from './data'
 
 describe('release evidence and milestone history', () => {
   it('has ordered, unique published versions with explicit gaps', () => {
@@ -33,5 +33,26 @@ describe('release evidence and milestone history', () => {
   it('uses deterministic anchors including legacy versions', () => {
     expect(releaseAnchor('v1.15.8')).toBe('release-v1-15-8')
     expect(releaseHref('1.0.67')).toBe('/changelog#release-1-0-67')
+  })
+})
+
+describe('localized release data', () => {
+  it('provides complete Chinese milestones without changing version evidence', () => {
+    const translated = getMilestones('zh')
+    expect(getMilestones('en')).toEqual(milestones)
+    expect(translated).toHaveLength(milestones.length)
+    for (const original of milestones) {
+      const item = translated.find(record => record.id === original.id)!
+      expect(item.introducedVersion).toBe(original.introducedVersion)
+      expect(item.details).toHaveLength(original.details.length)
+      expect(item.evolution.map(step => step.version)).toEqual(original.evolution.map(step => step.version))
+      for (const text of [item.title, item.summary, item.category, item.scope, ...item.details, ...item.evolution.map(step => step.description)]) expect(text).toMatch(/[\u4e00-\u9fff]/)
+    }
+  })
+  it('localizes release anchors and translates only documented legacy notes', () => {
+    expect(releaseHref('v1.15.8', 'zh')).toBe('/zh/changelog#release-v1-15-8')
+    expect(getReleaseTranslation('1.0.66')).toContain('Whisper-1')
+    expect(getReleaseTranslation('1.0.67')).toContain('gpt-4o-mini-transcribe')
+    expect(getReleaseTranslation('v999.0.0')).toBeUndefined()
   })
 })
