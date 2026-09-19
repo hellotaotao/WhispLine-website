@@ -1,6 +1,16 @@
 import type { Locale } from '../i18n'
 
 const chinese = {
+  'Local transcription.': '本地转写。',
+  'No account.': '无需账号。',
+  'No subscription.': '无需订阅。',
+  'Download a model. Transcribe offline.': '下载模型，即可离线转写。',
+  'Optional cloud transcription · Bring your own API key.': '云端转写可选 · 使用自己的 API key',
+  'Why local matters': '为什么选择本地转写',
+  'Local transcription. No signup.': '本地转写，无需注册。',
+  'Download a model and transcribe locally without registering or configuring an API key. You can also use cloud transcription through Groq or OpenAI with your own API key.': '下载模型后即可在本地转写，无需注册或配置 API key。偏好云端？也可以使用自己的 API key，接入 Groq 或 OpenAI。',
+  'Optional cloud features': '可选的云端功能',
+
   'Skip to content': '跳到正文',
   'Primary navigation': '主要导航',
   'SayType home': 'SayType 首页',

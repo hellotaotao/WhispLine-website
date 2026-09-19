@@ -29,8 +29,6 @@ const workflowSteps = [
 const featuredCapabilities = [
   { id: 'global-hotkey', title: 'Global hold-to-record hotkey', description: 'Hold Ctrl+Shift to record, release to stop, and keep your hands near the keyboard.' },
   { id: 'active-app-insertion', title: 'Active-app text insertion', description: 'Transcribed text is sent back to the app and text field that already has your cursor.' },
-  { id: 'engine-choice', title: '100% local transcription', description: 'Turn speech into text on your Mac. In local mode, your audio and transcript stay on your device.' },
-  { id: 'translation', title: 'Speak it. Write it in English.', description: 'Hold Shift+Alt to translate speech into English through a cloud provider using your own API key.' },
 ] as const
 
 const practicalDetails = [
@@ -61,9 +59,9 @@ function App({ locale = 'en', preview = getPreviewLayout(typeof window === 'unde
       <SiteHeader locale={locale} page="home" />
       <main id="main" tabIndex={-1}>
         <HeroSection locale={locale} layout={layout} />
+        <PrivacySection locale={locale} />
         <WorkflowSection locale={locale} />
         <ProductSection locale={locale} />
-        <PrivacySection locale={locale} />
         <DownloadSection locale={locale} />
       </main>
       <SiteFooter locale={locale} />
@@ -90,16 +88,16 @@ function HeroSection({ locale, layout }: { locale: Locale; layout: PreviewLayout
       <div className="hero-content">
         <div className="hero-copy">
           <h1 id="hero-title">
-            {layout === 'stage' ? <><span>{t('Speak freely.')}</span><span>{t('Keep your words close.')}</span></> :
-              <><span>{t('Your voice.')}</span><span>{t('Right where')}</span><span>{t('you work.')}</span></>}
+            <span>{t('Local transcription.')}</span>
+            <span>{t('No account.')}</span>
+            <span>{t('No subscription.')}</span>
           </h1>
-          {layout === 'editorial' && <p className="hero-shortcut">{t('Hold Ctrl+Shift, speak, release.')}</p>}
-          <p className="hero-description">{t('Voice typing in the apps you already use.')}</p>
+          <p className="hero-description">{t('Download a model. Transcribe offline.')}</p>
           <div className="hero-actions">
             <DownloadButton locale={locale} />
             <a className="text-link" href="#workflow">{t('See how it works')}</a>
           </div>
-          <p className="hero-tagline">{t('Local transcription. No account. No subscription.')}</p>
+          <p className="hero-tagline">{t('Optional cloud transcription · Bring your own API key.')}</p>
         </div>
         <figure className="hero-product">
           <a href="/saytype-settings.png" target="_blank" rel="noreferrer" aria-label={t('View full-size SayType Dictation Settings screenshot')}>
@@ -116,8 +114,8 @@ function WorkflowSection({ locale }: { locale: Locale }) {
   return (
     <section className="workflow-section" id="workflow" aria-labelledby="workflow-title">
       <div className="section-kicker">
-        <span>01</span>
-        <span>{t('One shortcut, every app')}</span>
+        <span>02</span>
+        <span>{t('How it works')}</span>
       </div>
       <div className="workflow-heading reveal-target">
         <h2 id="workflow-title">{t('Hold. Speak. Release.')}</h2>
@@ -142,7 +140,7 @@ function ProductSection({ locale }: { locale: Locale }) {
   return (
     <section className="product-section" id="product" aria-labelledby="product-title">
       <div className="section-kicker">
-        <span>02</span>
+        <span>03</span>
         <span>{t('The product')}</span>
       </div>
       <div className="product-layout">
@@ -175,9 +173,10 @@ function ProductSection({ locale }: { locale: Locale }) {
           ))}
         </div>
       </div>
-      <details className="model-details">
-        <summary>{t('Which local engine should I choose?')}</summary>
-        <p>{t('Qwen3-ASR 0.6B is the recommended local model, with a ~1 GB one-time download. Qwen3-ASR 1.7B and Nemotron live transcription are experimental options. The larger Qwen model needs a ~2.52 GB download; performance varies with your hardware.')}</p>
+      <details className="model-details cloud-options">
+        <summary>{t('Optional cloud features')}</summary>
+        <p className="cloud-disclosure">{t('Optional cloud transcription and translation send audio to Groq or OpenAI using your own API key. Provider charges may apply.')}</p>
+        <p className="translation-note">{t('Hold Shift+Alt to turn speech into English through a cloud provider. In local mode, translation setup asks for your consent before sending audio.')}</p>
       </details>
       <div className="product-reassurance reveal-target">
         <div className="history-reassurance">
@@ -202,15 +201,15 @@ function PrivacySection({ locale }: { locale: Locale }) {
   const t = homeCopy(locale)
   const localBenefits = [
     { title: 'Works offline', detail: 'Download a local model once, then transcribe without an internet connection.' },
+    { title: 'Local transcription. No signup.', detail: 'Download a model and transcribe locally without registering or configuring an API key. You can also use cloud transcription through Groq or OpenAI with your own API key.' },
     { title: 'No subscription or word limits', detail: 'Local transcription needs no account or API key. No weekly allowance and no per-minute service fees.' },
-    { title: 'Transcribe first. Edit on your terms.', detail: 'Get your words as text. You decide whether to rewrite them, which tool to use, and what to share.' },
   ] as const
 
   return (
     <section className="privacy-section" id="privacy" aria-labelledby="privacy-title">
       <div className="section-kicker">
-        <span>03</span>
-        <span>{t('Local by design')}</span>
+        <span>01</span>
+        <span>{t('Why local matters')}</span>
       </div>
       <div className="privacy-layout reveal-target">
         <div className="privacy-copy">
@@ -229,8 +228,6 @@ function PrivacySection({ locale }: { locale: Locale }) {
               </article>
             ))}
           </div>
-          <p className="cloud-disclosure">{t('Optional cloud transcription and translation send audio to Groq or OpenAI using your own API key. Provider charges may apply.')}</p>
-          <p className="translation-note">{t('Hold Shift+Alt to turn speech into English through a cloud provider. In local mode, translation setup asks for your consent before sending audio.')}</p>
         </div>
       </div>
       <p className="platform-note">{t('macOS is the primary tested path. Windows and Linux builds remain experimental.')}</p>
@@ -246,12 +243,16 @@ function DownloadSection({ locale }: { locale: Locale }) {
       <div className="download-copy reveal-target">
         <p>{t('Offline dictation. No account. No subscription.')}</p>
         <h2 id="download-title">{t('Your voice. No cloud required.')}</h2>
-        <DownloadButton locale={locale} />
         <ul className="download-requirements" aria-label={t('Download requirements')}>
           {downloadRequirements.map((requirement) => (
             <li key={t(requirement)}>{t(requirement)}</li>
           ))}
         </ul>
+        <details className="model-details">
+          <summary>{t('Which local engine should I choose?')}</summary>
+          <p>{t('Qwen3-ASR 0.6B is the recommended local model, with a ~1 GB one-time download. Qwen3-ASR 1.7B and Nemotron live transcription are experimental options. The larger Qwen model needs a ~2.52 GB download; performance varies with your hardware.')}</p>
+        </details>
+        <DownloadButton locale={locale} />
       </div>
     </section>
   )

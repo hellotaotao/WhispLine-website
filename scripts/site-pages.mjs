@@ -2,11 +2,11 @@ export const siteUrl = 'https://saytype.taotao.au';
 const metadata = {
   en: {
     home: {
-      title: 'SayType — Your voice. Right where you work.',
-      description: 'Voice typing in the apps you already use. Transcribe locally on your Mac with no account or subscription, or connect your own cloud provider.',
+      title: 'SayType — Local transcription. No account. No subscription.',
+      description: 'Offline transcription on your Mac: local transcription needs no account, API key or subscription. Cloud transcription is optional with your own API key.',
     },
     updates: {
-      title: 'SayType product updates — Milestones in local voice typing',
+      title: 'SayType product updates — Milestones in local transcription',
       description: 'Explore the important changes in SayType: local transcription, live dictation, recording recovery and model choice, with the versions that introduced them.',
     },
     changelog: {
@@ -16,11 +16,11 @@ const metadata = {
   },
   zh: {
     home: {
-      title: 'SayType — 在常用应用中，用语音输入文字',
-      description: '按住快捷键说话，松开后文字出现在光标处。SayType 支持 Mac 本地语音转写，无需账号或订阅，也可选择使用自己的云端服务。',
+      title: 'SayType — 本地语音转写，无需账号，无需订阅',
+      description: 'SayType 首推本地离线语音转写，无需账号、API key 或订阅，音频无需上传。也支持使用自己的 API key 选择云端转写。',
     },
     updates: {
-      title: 'SayType 产品更新 — 本地语音输入的重要进展',
+      title: 'SayType 产品更新 — 本地语音转写的重要进展',
       description: '了解 SayType 的重要更新：本地转写、实时听写、录音恢复与模型选择，以及这些功能首次引入和后续完善的版本。',
     },
     changelog: {

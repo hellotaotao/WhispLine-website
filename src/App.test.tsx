@@ -9,14 +9,14 @@ describe('SayType launch page', () => {
     expect(html.match(/<footer[\s\S]*?<\/footer>/)?.[0]).toContain('href="/updates"')
   })
 
-  it('renders the selected voice-to-cursor hero and primary path', () => {
+  it('renders the local-first hero and primary path', () => {
     const html = renderToStaticMarkup(<App />)
 
-    expect(html).toContain('Your voice.')
-    expect(html).toContain('Right where')
-    expect(html).toContain('you work.')
-    expect(html).toContain('Local transcription. No account. No subscription.')
-    expect(html).toContain('Hold Ctrl+Shift, speak, release.')
+    expect(html).toContain('Local transcription.')
+    expect(html).toContain('No account.')
+    expect(html).toContain('No subscription.')
+    expect(html).toContain('Optional cloud transcription · Bring your own API key.')
+    expect(html).toContain('Hold. Speak. Release.')
     expect(html).toContain('Download for Mac')
     expect(html).toContain('href="#workflow"')
   })
@@ -58,9 +58,9 @@ describe('SayType launch page', () => {
   it('renders the centered alternative only when explicitly requested', () => {
     const html = renderToStaticMarkup(<App preview="stage" />)
     expect(html).toContain('data-layout="stage"')
-    expect(html).toContain('Speak freely.')
+    expect(html).toContain('Local transcription.')
     expect(html).toContain('src="/saytype-stage-wave.webp"')
-    expect(html).toContain('Keep your words close.')
+    expect(html).toContain('No subscription.')
     expect(html).toContain('Layout preview')
     expect(html).toContain('href="?preview=editorial#top"')
     expect(html).toContain('href="?preview=stage#top"')
@@ -105,7 +105,7 @@ describe('SayType launch page', () => {
     expect(html).toContain('In local mode')
     expect(html).toContain('Works offline')
     expect(html).toContain('No subscription or word limits')
-    expect(html).toContain('Transcribe first. Edit on your terms.')
+    expect(html).toContain('Local transcription. No signup.')
     expect(html).not.toContain('Available transcription engines')
   })
 

@@ -5,8 +5,8 @@ const serializedMessaging = JSON.stringify(productMessaging).toLowerCase()
 
 describe('productMessaging', () => {
   it('matches the selected launch hero direction', () => {
-    expect(productMessaging.hero.headline).toBe('Your voice. Right where you work.')
-    expect(productMessaging.hero.subheadline).toBe('Hold Ctrl+Shift, speak, release.')
+    expect(productMessaging.hero.headline).toBe('Local transcription. No account. No subscription.')
+    expect(productMessaging.hero.subheadline).toBe('Download a model. Transcribe offline.')
     expect(productMessaging.hero.primaryCta).toBe('Download for Mac')
     expect(productMessaging.hero.secondaryCta).toBe('See how it works')
   })
@@ -51,12 +51,12 @@ describe('productMessaging', () => {
     }
   })
 
-  it('documents the end-to-end hotkey dictation workflow', () => {
+  it('leads with local benefits while documenting the dictation workflow', () => {
     expect(productMessaging.hero.proofPoints).toEqual(
       expect.arrayContaining([
-        'Hold Ctrl+Shift to record',
-        'Release to transcribe',
-        'Escape cancels recording or transcription',
+        'No account or API key for local transcription',
+        'No subscription or transcription quotas',
+        'Offline after the model download',
       ]),
     )
 
