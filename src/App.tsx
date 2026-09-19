@@ -1,4 +1,5 @@
 import './App.css'
+import './updates/UpdatesPage.css'
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { getPreviewLayout, type PreviewLayout } from './preview'
 import { setupPageMotion } from './motion'
@@ -116,6 +117,7 @@ function SiteHeader() {
         <a href="#workflow">How it works</a>
         <a href="#product">Product</a>
         <a href="#privacy">Privacy</a>
+        <a className="updates-nav-link" href="/updates">Updates</a>
       </nav>
       <DownloadButton />
     </header>
@@ -371,6 +373,7 @@ function SiteFooter() {
         <span>SayType</span>
       </a>
       <p>Voice to text. On your device.</p>
+      <a href="/updates">Updates</a>
       <a href={releasePageUrl}>GitHub releases ↗</a>
     </footer>
   )

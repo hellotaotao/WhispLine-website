@@ -1,0 +1,82 @@
+[
+  {
+    "id": "model-choice",
+    "title": "A larger local model, when you want the choice.",
+    "category": "Local models",
+    "introducedVersion": "v1.15.0",
+    "summary": "Qwen3-ASR 1.7B joins the smaller 0.6B model as an optional on-device transcription engine. You can manage the two downloads independently and choose which one to use.",
+    "details": ["The larger model is an experimental option, not a replacement for the recommended 0.6B model.", "Download and memory costs are shown before you choose. Browsing an engine’s settings does not need to change the engine in use."],
+    "scope": "Qwen3-ASR 1.7B is experimental. Performance depends on hardware and acceleration; this release does not establish Windows or Linux real-device performance.",
+    "evolution": [{"version": "v1.15.8", "description": "Click a ready engine to activate it, or use its separate expand control to inspect settings without switching. Cloud model changes apply within the active engine."}]
+  },
+  {
+    "id": "guided-setup",
+    "title": "A first run that takes you all the way to dictation.",
+    "category": "Getting started",
+    "introducedVersion": "v1.15.3",
+    "summary": "The redesigned setup walks through privacy, engine choice, microphone access, macOS Accessibility and a practice dictation. Leave midway and continue from the same step later.",
+    "details": ["Model download and permission setup can proceed alongside each other, with engine selection and readiness tracked separately.", "New installations use Qwen3-ASR 0.6B by default except on machines detected as low-end, which default to OpenAI. Existing installations keep their selected engine."],
+    "scope": "OpenAI requires your own API key and sends audio to the provider. The larger-model comparison is shown only on qualifying Apple Silicon hardware.",
+    "evolution": [{"version": "v1.15.5", "description": "Windows microphone status now reflects actual recording attempts, with ready, denied, no-device and error states in setup, Home and Settings."}]
+  },
+  {
+    "id": "native-recording",
+    "title": "A native recording path on Mac.",
+    "category": "Recording",
+    "introducedVersion": "v1.13.0",
+    "summary": "Mac recording moved from the webview microphone API to CoreAudio to address quiet or garbled openings observed on affected Macs. The microphone is opened for each dictation rather than kept active between recordings.",
+    "details": ["The macOS microphone indicator is no longer kept on between dictations.", "This is a capture change: it addresses how audio reaches the recognizer, rather than replacing the transcription model."],
+    "scope": "CoreAudio capture is macOS-only. Hardware behavior varies; this milestone does not claim every microphone or Bluetooth configuration has been verified.",
+    "evolution": [{"version": "v1.13.2", "description": "Startup and shutdown waits are bounded, and interrupted recordings are identified explicitly so available text can be recovered."}, {"version": "v1.15.2", "description": "Windows and Linux also open and close their webview microphone stream per dictation. Their recording backend remains different from macOS."}]
+  },
+  {
+    "id": "long-dictation",
+    "title": "Less work left after a long dictation.",
+    "category": "Local dictation",
+    "introducedVersion": "v1.9.0",
+    "summary": "Qwen can process completed chunks while you keep talking, instead of waiting for the entire recording before starting transcription. That leaves less audio to process after you release the shortcut.",
+    "details": ["Finalized chunk text appears while the remaining audio is still being captured.", "The engine starts warming up when recording begins. This is chunked processing, distinct from Nemotron’s live streaming recognition."],
+    "scope": "Applies to Qwen local dictation. Completion time depends on the recording and device; no fixed speed improvement is promised.",
+    "evolution": [{"version": "v1.9.1", "description": "Recording finalization gained safeguards and recovery handling for missing or late recorder events."}, {"version": "v1.14.1", "description": "Sample-coverage checks route detected gaps into recovery instead of automatically inserting a partial result. The original intermittent tail-loss trigger was still under investigation in this release."}]
+  },
+  {
+    "id": "recording-recovery",
+    "title": "Retry a saved recording instead of saying it again.",
+    "category": "Recovery",
+    "introducedVersion": "v1.8.0",
+    "summary": "Recovery first arrived for stalled local transcription: SayType retries once and, if it still cannot complete, saves the recording as a pending History entry for another attempt.",
+    "details": ["Later releases expanded saved-audio recovery to more transcription failures and improved the reasons shown in History.", "A manual retry uses the engine currently selected, so changing provider or correcting an API key can make the saved recording usable."],
+    "scope": "Retry requires successfully saved audio. History has a 100-entry limit; saved recordings are not a permanent backup.",
+    "evolution": [{"version": "v1.13.3", "description": "More failed requests retain audio and an error reason; retry uses the current engine and successful retries replace pending entries."}, {"version": "v1.13.4", "description": "Empty retry results preserve the recording, and cloud or translation failures with incomplete capture no longer miss their History entry."}]
+  },
+  {
+    "id": "live-transcription",
+    "title": "See words appear while you speak.",
+    "category": "Live transcription",
+    "introducedVersion": "v1.8.9",
+    "summary": "Nemotron 3.5 added a second local engine with streaming recognition on Apple Silicon. It produces a live transcript during recording, alongside Qwen’s batch-oriented approach.",
+    "details": ["Each local engine has its own download and can be selected from the app’s engine controls.", "Audio stays on-device when using the local engine. Optional cloud translation is a separate path."],
+    "scope": "Nemotron is an experimental option on Apple Silicon and Windows x64; platform availability is not a claim of end-to-end validation on every device.",
+    "evolution": [{"version": "v1.11.0", "description": "Nemotron became available on Windows x64 using the CPU runtime."}, {"version": "v1.15.2", "description": "The language picker became available for Nemotron rather than being locked to Qwen-style automatic detection."}, {"version": "v1.15.3", "description": "Language changes now take effect in live dictation without restarting the app."}]
+  },
+  {
+    "id": "automatic-updates",
+    "title": "New versions, without another installer hunt.",
+    "category": "App updates",
+    "introducedVersion": "v1.4.0",
+    "summary": "Background update checks and in-app installation arrived with v1.4.0. SayType checks daily, downloads an available update, and lets you choose when to restart.",
+    "details": ["You can also check for updates from Settings.", "Installing an update remains an explicit action rather than an automatic restart during your work."],
+    "scope": "This describes the built-in updater in official desktop releases.",
+    "evolution": [{"version": "v1.15.6", "description": "The Home update card gained a What’s new link to that version’s GitHub release notes, so you can review changes before restarting."}]
+  },
+  {
+    "id": "local-transcription",
+    "title": "Dictation that can stay on your device.",
+    "category": "Local transcription",
+    "introducedVersion": "v1.4.0",
+    "summary": "Qwen3-ASR brought on-device speech recognition to SayType. After downloading the model, local transcription can run without an account, API key or network connection.",
+    "details": ["Model download, progress and removal became available in Settings, alongside a choice between local and cloud transcription.", "The next release made local setup more prominent on Apple Silicon and added quicker engine switching from Home and the menu bar."],
+    "scope": "Introduced for Mac, with Apple Silicon recommended for local use. Optional Groq/OpenAI transcription and translation still upload audio to the selected provider.",
+    "evolution": [{"version": "v1.5.0", "description": "Apple Silicon onboarding began leading with the local model, with Home and tray shortcuts for changing engines."}, {"version": "v1.6.0", "description": "Local decoding gained a visible word-by-word progress preview after recording. This is not the live recognition introduced later with Nemotron."}]
+  }
+]

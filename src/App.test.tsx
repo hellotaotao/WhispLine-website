@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest'
 import App from './App'
 
 describe('SayType launch page', () => {
+  it('links to product updates from the header and mobile-visible footer', () => {
+    const html = renderToStaticMarkup(<App />)
+    expect(html.match(/href="\/updates"/g)).toHaveLength(2)
+    expect(html.match(/<footer[\s\S]*?<\/footer>/)?.[0]).toContain('href="/updates"')
+  })
+
   it('renders the selected voice-to-cursor hero and primary path', () => {
     const html = renderToStaticMarkup(<App />)
 

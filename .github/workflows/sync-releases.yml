@@ -1,0 +1,82 @@
+name: Sync published release notes
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [saytype-release-notes-ready]
+  schedule:
+    - cron: '23 6 * * *'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: saytype-release-content
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Check for an existing content review
+        id: review
+        run: |
+          count=$(gh pr list --head content/release-sync --state open --json number --jq length)
+          echo "pending=$count" >> "$GITHUB_OUTPUT"
+          if [ "$count" != "0" ]; then
+            echo "A release-content PR is awaiting review; preserving its edits. The next run after merge will catch up."
+          fi
+      - name: Sync the full published release snapshot
+        if: steps.review.outputs.pending == '0'
+        run: |
+          cp src/content/releases.json "$RUNNER_TEMP/previous-releases.json"
+          npm run releases:sync
+      - name: Detect content changes
+        id: changes
+        if: steps.review.outputs.pending == '0'
+        run: |
+          if git diff --quiet -- src/content/releases.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Prepare optional milestone draft
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ] && [ -n "$ANTHROPIC_MODEL" ]; then
+            if ! npm run updates:draft -- --baseline "$RUNNER_TEMP/previous-releases.json"; then
+              echo "::warning::AI draft failed. Review the synchronized release notes manually; curated milestones were not changed."
+            fi
+          else
+            echo "No AI configuration; release-note synchronization works without it."
+          fi
+      - name: Validate the proposed content
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          npm ci
+          npm run lint
+          npm test
+          npm run build
+      - name: Open one review PR without publishing
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git switch -c content/release-sync
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/content/releases.json
+          if [ -f content-drafts/updates.json ]; then git add content-drafts/updates.json; fi
+          git commit -m "content: sync published SayType release notes"
+          previous=$(git ls-remote --heads origin content/release-sync | cut -f1)
+          git push --force-with-lease="refs/heads/content/release-sync:$previous" origin HEAD:content/release-sync
+          gh pr create --head content/release-sync --title "Update SayType release history" --body "Synchronizes published GitHub releases, including later note edits. Review source notes and any content-drafts/updates.json proposals. Curated milestones are never automatically rewritten. Validation: lint, tests, build, generated HTML checks. Merge only after editorial review; this workflow does not merge or deploy."
