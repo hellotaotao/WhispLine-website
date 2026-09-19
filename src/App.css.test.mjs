@@ -11,6 +11,12 @@ describe('product presentation and motion', () => {
     expect(rule).not.toContain('object-fit: cover')
     expect(css).not.toContain('1200 / 480')
   })
+  it('keeps the waveform full-color and gives the screenshot half the hero', () => {
+    expect(css).toContain('grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr)')
+    expect(css).not.toContain('left: 42%')
+    expect(css).not.toContain('opacity: 0.6; mask-image')
+    expect(css).not.toContain('transparent, #000 40%')
+  })
   it('uses a proportional decorative asset and no perpetual animation', () => {
     const rule = css.match(/\.hero-waveform\s*\{([^}]+)\}/)?.[1]
     expect(rule).toContain('height: auto')
