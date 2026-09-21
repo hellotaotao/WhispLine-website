@@ -1,5 +1,21 @@
 [
   {
+    "version": "v1.15.10",
+    "publishedAt": "2026-09-19T17:42:22Z",
+    "updatedAt": "2026-09-19T17:45:48Z",
+    "url": "https://github.com/hellotaotao/saytype/releases/tag/v1.15.10",
+    "body": "## Fixes\n\n- Fixed the model picker in Settings sometimes showing or saving the wrong model when you switched engines or picked a model while a previous choice was still being saved. In particular:\n  - Reopening the currently active engine's drawer while a save was still in progress could show a stale model, so clicking the model you actually wanted looked like a no-op and got ignored.\n  - A model chosen right as you switched to a new engine could be silently dropped once the switch completed.\n  - Opening a different engine's drawer while a pick was still saving could cause that pick to be lost.\n\nThese could result in the wrong transcription model ending up selected and saved without any indication something went wrong. Model selection now correctly reflects (and honors) the most recent pick in all of these cases.\n\n## 中文\n\n## 修复\n\n- 修复了设置页中模型选择器的若干问题：在切换引擎或某个模型选择仍在保存过程中时，界面可能显示错误的模型，或最终保存了错误的模型。具体包括：\n  - 在某次保存尚未完成时重新打开当前使用中引擎的抽屉，可能显示过期的模型，导致你点击真正想要的模型时被误判为\"未变化\"而被忽略。\n  - 在切换引擎的瞬间选择的模型，可能在切换完成后被悄悄丢弃。\n  - 在某次选择仍在保存时打开另一个引擎的抽屉，可能导致之前的选择丢失。\n\n以上问题都可能导致最终保存并生效的转写模型与你实际选择的不一致，且没有任何提示。现在，模型选择在上述所有情况下都能正确显示并生效为最新的选择。\n\n## Download / 下载\n\nPick the one installer for your platform:\n- **macOS** — the `.dmg`\n- **Windows** — the `_x64-setup.exe` (or `.msi`)\n- **Linux** — the `.AppImage` (portable), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)\n\nThe remaining files (`*.sig`, `latest.json`, `*.app.tar.gz`) are used by the built-in auto-updater — you don't need to download them.\n\n（各平台任选一个安装：macOS 下 `.dmg`，Windows 下 `_x64-setup.exe` 或 `.msi`，Linux 下 `.AppImage`/`.deb`/`.rpm`。带 `.sig`、`latest.json`、`*.app.tar.gz` 的是自动更新用的，无需下载。）\n",
+    "notesStatus": "available"
+  },
+  {
+    "version": "v1.15.9",
+    "publishedAt": "2026-09-19T16:05:55Z",
+    "updatedAt": "2026-09-19T16:10:01Z",
+    "url": "https://github.com/hellotaotao/saytype/releases/tag/v1.15.9",
+    "body": "## Fixes\n\n- Fixed a bug in Settings where quickly switching cloud models (e.g., picking Large V3 then Turbo again before the save finished) could leave the wrong model highlighted, or cause an older pick to be re-saved later. The last model you pick now always wins, even if a save was already in progress; if a save fails, the highlight correctly falls back to the model still in use.\n\n## Improvements\n\n- History now keeps the last 200 dictations instead of 100, so recent activity spans about a weekend of use instead of about 42 hours.\n- Rewrote the Qwen3-ASR 1.7B model description in Settings so it tells you what matters as a user (download size, memory use, and speed) instead of reading like a benchmark log.\n\n## 中文\n\n## 修复\n\n- 修复了设置页面中一个问题：快速切换云端模型（例如先选 Large V3 再选回 Turbo，且保存尚未完成）时，可能导致高亮显示的模型不正确，或稍后自动保存了旧的选择。现在无论保存是否仍在进行中，最后一次选择都会生效；如果保存失败，高亮会正确回退到当前实际使用的模型。\n\n## 改进\n\n- 历史记录容量从 100 条提升到 200 条，最近记录现在大约能覆盖一个周末的使用量，而不只是约 42 小时。\n- 重写了设置中 Qwen3-ASR 1.7B 模型的说明文字，改为用户更关心的信息（下载大小、内存占用、转写速度），而不是像一份测试记录。\n\n## Download / 下载\n\nPick the one installer for your platform:\n- **macOS** — the `.dmg`\n- **Windows** — the `_x64-setup.exe` (or `.msi`)\n- **Linux** — the `.AppImage` (portable), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)\n\nThe remaining files (`*.sig`, `latest.json`, `*.app.tar.gz`) are used by the built-in auto-updater — you don't need to download them.\n\n（各平台任选一个安装：macOS 下 `.dmg`，Windows 下 `_x64-setup.exe` 或 `.msi`，Linux 下 `.AppImage`/`.deb`/`.rpm`。带 `.sig`、`latest.json`、`*.app.tar.gz` 的是自动更新用的，无需下载。）\n",
+    "notesStatus": "available"
+  },
+  {
     "version": "v1.15.8",
     "publishedAt": "2026-09-19T05:26:25Z",
     "updatedAt": "2026-09-19T05:29:32Z",
