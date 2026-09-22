@@ -26,22 +26,12 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - name: Check for an existing content review
-        id: review
-        run: |
-          count=$(gh pr list --head content/release-sync --state open --json number --jq length)
-          echo "pending=$count" >> "$GITHUB_OUTPUT"
-          if [ "$count" != "0" ]; then
-            echo "A release-content PR is awaiting review; preserving its edits. The next run after merge will catch up."
-          fi
       - name: Sync the full published release snapshot
-        if: steps.review.outputs.pending == '0'
         run: |
           cp src/content/releases.json "$RUNNER_TEMP/previous-releases.json"
           npm run releases:sync
       - name: Detect content changes
         id: changes
-        if: steps.review.outputs.pending == '0'
         run: |
           if git diff --quiet -- src/content/releases.json; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -68,15 +58,13 @@ jobs:
           npm run lint
           npm test
           npm run build
-      - name: Open one review PR without publishing
+      - name: Commit validated release-content update to main
         if: steps.changes.outputs.changed == 'true'
         run: |
-          git switch -c content/release-sync
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add src/content/releases.json
           if [ -f content-drafts/updates.json ]; then git add content-drafts/updates.json; fi
+          git diff --cached --quiet && exit 0
           git commit -m "content: sync published SayType release notes"
-          previous=$(git ls-remote --heads origin content/release-sync | cut -f1)
-          git push --force-with-lease="refs/heads/content/release-sync:$previous" origin HEAD:content/release-sync
-          gh pr create --head content/release-sync --title "Update SayType release history" --body "Synchronizes published GitHub releases, including later note edits. Review source notes and any content-drafts/updates.json proposals. Curated milestones are never automatically rewritten. Validation: lint, tests, build, generated HTML checks. Merge only after editorial review; this workflow does not merge or deploy."
+          git push origin HEAD:main
