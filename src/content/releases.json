@@ -1,5 +1,13 @@
 [
   {
+    "version": "v1.16.0",
+    "publishedAt": "2026-09-24T15:44:57Z",
+    "updatedAt": "2026-09-24T15:44:57Z",
+    "url": "https://github.com/hellotaotao/saytype/releases/tag/v1.16.0",
+    "body": "## What's new\n\n- Nothing new was added this release; the main change is a removal (see below).\n\n## Improvements\n\n- Removed the translate mode (hold Shift+Alt to get English text) — it was rarely used and added its own provider picker and upload-consent prompt. Shift+Alt is now just a regular recording shortcut. If you relied on this, please open an issue.\n- A local engine (Qwen/Nemotron) now simply hides the API key field when it's not needed, instead of parking it inside a separate translation panel.\n\n## Fixes\n\n- An update-check failure used to dump a long raw error message into the Settings status pill, squeezing the \"Software updates\" text into a single word per line. It now shows a short \"Couldn't check for updates. Try again later.\" message, with the full detail available in the tooltip and the log.\n- Fixed a release-pipeline timing issue where Mac users could briefly see an update error in the minutes right after a new version was tagged, because the release could go public before the macOS build had finished uploading. Releases are now only published once every platform's build is ready.\n\n## 中文\n\n## 新增功能\n\n- 本次没有新增功能，主要变化是移除了一项功能（见下文）。\n\n## 改进\n\n- 移除了翻译模式（按住 Shift+Alt 说话得到英文）——这个功能使用率很低，却带来了独立的服务商选择和上传同意提示。Shift+Alt 现在只是一个普通的录音快捷键。如果你依赖这个功能，请提交 issue 告诉我们。\n- 使用本地引擎（千问/Nemotron）时，不再需要的 API key 输入框会直接隐藏，而不是被挪到单独的翻译面板里。\n\n## 修复\n\n- 修复了检查更新失败时，设置页状态提示会显示一长串原始错误信息，把「软件更新」的说明文字挤成一列一个字的问题。现在只显示简短的「检查更新失败，请稍后再试。」，完整信息可在悬浮提示和日志中查看。\n- 修复了发布流程的时序问题：过去在推送新版本 tag 后的几分钟内，如果 macOS 版本还没构建完成，Mac 用户检查更新时可能会看到更新错误。现在要等所有平台都构建完成后才会正式发布。\n\n## Download / 下载\n\nPick the one installer for your platform:\n- **macOS** — the `.dmg`\n- **Windows** — the `_x64-setup.exe` (or `.msi`)\n- **Linux** — the `.AppImage` (portable), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)\n\nThe remaining files (`*.sig`, `latest.json`, `*.app.tar.gz`) are used by the built-in auto-updater — you don't need to download them.\n\n（各平台任选一个安装：macOS 下 `.dmg`，Windows 下 `_x64-setup.exe` 或 `.msi`，Linux 下 `.AppImage`/`.deb`/`.rpm`。带 `.sig`、`latest.json`、`*.app.tar.gz` 的是自动更新用的，无需下载。）\n",
+    "notesStatus": "available"
+  },
+  {
     "version": "v1.15.10",
     "publishedAt": "2026-09-19T17:42:22Z",
     "updatedAt": "2026-09-19T17:45:48Z",
