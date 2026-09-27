@@ -1,5 +1,13 @@
 [
   {
+    "version": "v1.17.2",
+    "publishedAt": "2026-09-27T08:14:08Z",
+    "updatedAt": "2026-09-27T08:14:08Z",
+    "url": "https://github.com/hellotaotao/saytype/releases/tag/v1.17.2",
+    "body": "## Fixes\n- Fixed emoji and other special characters occasionally arriving as garbled text when typed into the focused app — long insertions are now split only between whole characters, so multi-part characters (like emoji) never get cut in half.\n- Fixed inserted text sometimes triggering unintended shortcuts when a modifier key (Shift, Control, Option, Command, Caps Lock, Fn) was held down while dictation was inserting text.\n\n## Improvements\n- Faster text insertion: the pause between chunks of typed text was reduced from 5ms to 3ms, making long dictations appear noticeably quicker.\n\n## 中文\n\n## 修复\n- 修复了向当前应用输入文本时，表情符号等特殊字符偶尔被截断为乱码的问题——长文本现在只会在完整字符之间分割，多字节字符（如表情符号）不会再被从中间切断。\n- 修复了在插入文本过程中，如果用户按住了修饰键（Shift、Control、Option、Command、Caps Lock、Fn），插入的文本可能被误判为快捷键操作的问题。\n\n## 改进\n- 文本插入速度提升：文本分块之间的暂停时间从 5 毫秒缩短至 3 毫秒，长段听写内容的输入体验更加流畅。\n\n## Download / 下载\n\nPick the one installer for your platform:\n- **macOS** — the `.dmg`\n- **Windows** — the `_x64-setup.exe` (or `.msi`)\n- **Linux** — the `.AppImage` (portable), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)\n\nThe remaining files (`*.sig`, `latest.json`, `*.app.tar.gz`) are used by the built-in auto-updater — you don't need to download them.\n\n（各平台任选一个安装：macOS 下 `.dmg`，Windows 下 `_x64-setup.exe` 或 `.msi`，Linux 下 `.AppImage`/`.deb`/`.rpm`。带 `.sig`、`latest.json`、`*.app.tar.gz` 的是自动更新用的，无需下载。）\n",
+    "notesStatus": "available"
+  },
+  {
     "version": "v1.17.1",
     "publishedAt": "2026-09-25T16:25:34Z",
     "updatedAt": "2026-09-25T16:25:34Z",
