@@ -1,13 +1,33 @@
 [
   {
+    "id": "hands-free-dictation",
+    "title": "双击后松开手，也能继续听写。",
+    "category": "录音快捷键",
+    "introducedVersion": "v1.18.0",
+    "summary": "快速按两次 Ctrl+Shift 即可锁定录音，不必一直按住。若当前显示插入失败的卡片，轻点一次则会把卡片中的文字重新插入到光标处。",
+    "details": ["锁定后无需持续按键，直到再次按下、按 Escape 或达到 12 分钟上限。", "两次短按间隔需在 350 毫秒内。没有失败卡片时，单次轻点仍按误触发取消；轻点后再按住则是普通听写。"],
+    "scope": "Windows 上用 Ctrl+Shift 快速切换两次键盘布局，也可能触发录音锁定。",
+    "evolution": []
+  },
+  {
+    "id": "filler-removal",
+    "title": "少一点“嗯、呃”，少一次手动整理。",
+    "category": "转写整理",
+    "introducedVersion": "v1.18.0",
+    "summary": "最终转写可自动过滤停顿语气词“嗯”“呃”和单独出现的“额”，并整理周围的停顿标点，例如“觉得，呃，我们”变成“觉得，我们”。",
+    "details": ["“过滤语气词”设置默认开启，可以关闭。", "引用中的语气词、并列列举、当作词语提及、词语组成部分和转述他人的应答会保留。"],
+    "scope": "处理针对上述中文语气词。若结果全部由语气词组成，过滤后按无语音处理；未成对的引号不视为引用。",
+    "evolution": []
+  },
+  {
     "id": "model-choice",
     "title": "新增更大的本地模型，多一种选择。",
     "category": "本地模型",
     "introducedVersion": "v1.15.0",
-    "summary": "在原有 0.6B 模型之外，SayType 新增 Qwen3-ASR 1.7B，作为可选的设备端转写引擎。两个模型可以分别下载和管理，由你决定使用哪一个。",
-    "details": ["较大的模型仍是实验性选项，不会取代推荐的 0.6B 模型。", "选择前即可看到下载大小和内存需求。查看某个引擎的设置，不必同时切换正在使用的引擎。"],
-    "scope": "Qwen3-ASR 1.7B 仍处于实验阶段。实际性能取决于硬件与加速方式；本次发布不代表已验证 Windows 或 Linux 上的真机性能。",
-    "evolution": [{"version": "v1.15.8", "description": "点击已就绪的引擎即可启用，也可以用独立的展开按钮查看设置而不切换引擎。云端模型的修改会在当前引擎内生效。"}]
+    "summary": "Qwen3-ASR 1.7B 在 v1.15.0 作为实验性选项加入。如今千问是一个引擎、0.6B 与 1.7B 是它的两种大小，可以分别下载管理，并根据本机听写速度获得切换建议。",
+    "details": ["下载 1.7B 时仍可继续用 0.6B 听写；下载完成后自动切换，除非你在下载期间已改选其他引擎。", "切换到其他服务商再返回千问时，会恢复上次使用的大小。两种大小都下载好后，可以直接在首页切换。"],
+    "scope": "1.7B 现称为“更大”的模型选项，不再标为实验性。切换建议依据本机实测听写速度，不承诺所有设备都能达到相同性能。",
+    "evolution": [{"version": "v1.15.8", "description": "点击已就绪的引擎即可启用，也可以用独立的展开按钮查看设置而不切换引擎。云端模型的修改会在当前引擎内生效。"}, {"version": "v1.17.0", "description": "千问合并为一个引擎的两种大小，新增基于实测速度的切换建议，并去掉 1.7B 的实验性标签。"}, {"version": "v1.17.1", "description": "首页改为紧凑的引擎按钮，千问按钮直接显示大小并支持快捷切换；电脑与云朵图标区分本地和云端引擎。"}]
   },
   {
     "id": "guided-setup",
@@ -16,8 +36,8 @@
     "introducedVersion": "v1.15.3",
     "summary": "重新设计的设置引导依次介绍隐私、引擎选择、麦克风权限、macOS 辅助功能权限和听写练习。中途离开后，下次可以从原来的步骤继续。",
     "details": ["模型下载和权限设置可以同时进行，引擎的选择状态与就绪状态分别显示。", "新安装默认使用 Qwen3-ASR 0.6B；检测为低配置的设备默认使用 OpenAI。已有安装会保留原来选择的引擎。"],
-    "scope": "OpenAI 需要你自己的 API key，并会将音频发送给服务提供商。较大模型的对比信息仅在符合条件的 Apple Silicon 设备上显示。",
-    "evolution": [{"version": "v1.15.5", "description": "Windows 的麦克风状态改为依据实际录音尝试判断。设置引导、首页和设置页会显示就绪、权限被拒绝、无设备或错误状态。"}]
+    "scope": "OpenAI 需要你自己的 API key，并会将音频发送给服务提供商。首次设置不再提供 1.7B 选项，较大模型可在之后选择。",
+    "evolution": [{"version": "v1.15.5", "description": "Windows 的麦克风状态改为依据实际录音尝试判断。设置引导、首页和设置页会显示就绪、权限被拒绝、无设备或错误状态。"}, {"version": "v1.17.0", "description": "首次设置简化为选择本地或云端，不再预先提供 1.7B；Groq 和 Nemotron 收进“更多”，当前使用的引擎仍保持可见。"}]
   },
   {
     "id": "native-recording",
@@ -55,9 +75,9 @@
     "category": "实时转写",
     "introducedVersion": "v1.8.9",
     "summary": "Nemotron 3.5 成为 SayType 的第二款本地引擎，率先在 Apple Silicon 上提供流式识别。它会在录音过程中实时生成文字，与 Qwen 的批处理方式并存。",
-    "details": ["每款本地引擎都可以独立下载，并在应用的引擎选择控件中切换。", "使用本地引擎时，音频留在设备上。可选的云端翻译走独立的处理路径。"],
+    "details": ["每款本地引擎都可以独立下载，并在应用的引擎选择控件中切换。", "使用本地引擎时，音频留在设备上。翻译模式已在 v1.16.0 移除。"],
     "scope": "Nemotron 是适用于 Apple Silicon 和 Windows x64 的实验性选项。提供平台版本，不代表每种设备都已完成端到端验证。",
-    "evolution": [{"version": "v1.11.0", "description": "Nemotron 新增 Windows x64 支持，使用 CPU 运行时。"}, {"version": "v1.15.2", "description": "Nemotron 开放语言选择，不再像 Qwen 一样固定为自动检测。"}, {"version": "v1.15.3", "description": "修改语言后即可在实时听写中生效，无需重启应用。"}]
+    "evolution": [{"version": "v1.11.0", "description": "Nemotron 新增 Windows x64 支持，使用 CPU 运行时。"}, {"version": "v1.15.2", "description": "Nemotron 开放语言选择，不再像 Qwen 一样固定为自动检测。"}, {"version": "v1.15.3", "description": "修改语言后即可在实时听写中生效，无需重启应用。"}, {"version": "v1.16.0", "description": "移除独立的翻译模式及其服务商选择、上传同意提示；本地引擎不需要的 API key 输入框直接隐藏。"}]
   },
   {
     "id": "automatic-updates",
@@ -76,7 +96,7 @@
     "introducedVersion": "v1.4.0",
     "summary": "Qwen3-ASR 为 SayType 带来了设备端语音识别。下载模型后，本地转写无需账号、API key 或网络连接即可运行。",
     "details": ["设置页新增模型下载、进度和移除功能，并支持在本地与云端转写之间选择。", "下一个版本在 Apple Silicon 上更突出本地设置，并提供首页和菜单栏的快捷引擎切换。"],
-    "scope": "最初面向 Mac 推出，推荐使用 Apple Silicon 进行本地转写。可选的 Groq/OpenAI 转写及翻译仍会将音频上传至所选服务提供商。",
-    "evolution": [{"version": "v1.5.0", "description": "Apple Silicon 的首次设置开始优先引导使用本地模型，并在首页和托盘中增加切换引擎的入口。"}, {"version": "v1.6.0", "description": "本地解码新增录音结束后逐字显示的进度预览。这并不是后来由 Nemotron 提供的实时识别。"}]
+    "scope": "最初面向 Mac 推出，推荐使用 Apple Silicon 进行本地转写。可选的 Groq/OpenAI 转写仍会将音频上传至所选服务提供商；翻译模式已移除。",
+    "evolution": [{"version": "v1.5.0", "description": "Apple Silicon 的首次设置开始优先引导使用本地模型，并在首页和托盘中增加切换引擎的入口。"}, {"version": "v1.6.0", "description": "本地解码新增录音结束后逐字显示的进度预览。这并不是后来由 Nemotron 提供的实时识别。"}, {"version": "v1.16.0", "description": "移除翻译模式，Shift+Alt 改为普通录音快捷键。"}]
   }
 ]
