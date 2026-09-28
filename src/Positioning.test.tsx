@@ -7,7 +7,7 @@ describe('local-first marketing hierarchy', () => {
     for (const preview of [null, 'stage'] as const) {
       it(`leads with local value before instructions: ${locale}/${preview}`, () => {
         const html = renderToStaticMarkup(<App locale={locale} preview={preview} />)
-        const hero = html.match(/<section class="hero-section"[\s\S]*?<\/section>/)![0]
+        const hero = html.match(/<section class="hero-section illustrated-hero"[\s\S]*?<\/section>/)![0]
         const heading = hero.match(/<h1[\s\S]*?<\/h1>/)![0]
         for (const text of locale === 'zh' ? ['本地转写。', '无需账号。', '无需订阅。'] : ['Local transcription.', 'No account.', 'No subscription.']) expect(heading).toContain(text)
         expect(hero).not.toContain('Ctrl+Shift')
@@ -26,7 +26,7 @@ describe('local and cloud copy boundaries', () => {
   for (const locale of ['en', 'zh'] as const) {
     it(`explains optional cloud transcription without expanding details: ${locale}`, () => {
       const html = renderToStaticMarkup(<App locale={locale} preview={null} />)
-      const hero = html.match(/<section class="hero-section"[\s\S]*?<\/section>/)![0]
+      const hero = html.match(/<section class="hero-section illustrated-hero"[\s\S]*?<\/section>/)![0]
       const benefits = html.match(/<section class="privacy-section"[\s\S]*?<\/section>/)![0]
       for (const section of [hero, benefits]) {
         expect(section).toContain(locale === 'zh' ? '自己的 API key' : 'your own API key')
@@ -45,6 +45,23 @@ describe('concise hero copy', () => {
       const html = renderToStaticMarkup(<App locale={locale} preview={null} />)
       const description = html.match(/<p class="hero-description">([^<]+)<\/p>/)![1]
       expect(description).toBe(locale === 'zh' ? '下载模型，即可离线转写。' : 'Download a model. Transcribe offline.')
+    })
+  }
+})
+
+describe('illustrated cross-platform homepage', () => {
+  for (const locale of ['en', 'zh'] as const) {
+    it(`uses the visual-first illustration and explicit platform support in ${locale}`, () => {
+      const html = renderToStaticMarkup(<App locale={locale} preview={null} />)
+      const hero = html.match(/<section class="hero-section illustrated-hero"[\s\S]*?<\/section>/)![0]
+      const platforms = html.match(/<section class="platform-section"[\s\S]*?<\/section>/)![0]
+      expect(hero).toContain('/saytype-home-illustration.webp')
+      expect(platforms).toContain('macOS')
+      expect(platforms).toContain('Windows')
+      expect(platforms).toContain('Linux')
+      expect(platforms).toContain(locale === 'zh' ? '主要测试平台' : 'Primary tested platform')
+      expect(platforms.match(/Experimental|实验阶段/g)).toHaveLength(2)
+      expect(platforms).not.toContain('Same experience')
     })
   }
 })

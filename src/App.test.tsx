@@ -29,13 +29,12 @@ describe('SayType launch page', () => {
     expect(html).toContain('src="/saytype-settings.png"')
   })
 
-  it('uses the whole normally proportioned Settings window in the hero', () => {
+  it('uses the standalone illustration as the hero visual', () => {
     const html = renderToStaticMarkup(<App />)
-    const hero = html.match(/<section class="hero-section"[\s\S]*?<\/section>/)?.[0] ?? ''
-    expect(hero).toContain('src="/saytype-settings.png"')
-    expect(hero).toContain('width="1152" height="768"')
-    expect(hero).not.toContain('saytype-home.png')
-    expect(hero).not.toContain('loading="lazy"')
+    const hero = html.match(/<section class="hero-section illustrated-hero"[\s\S]*?<\/section>/)?.[0] ?? ''
+    expect(hero).toContain('src="/saytype-home-illustration.webp"')
+    expect(hero).toContain('width="1536" height="1024"')
+    expect(hero).not.toContain('saytype-settings.png')
   })
 
   it('shows real App Settings before capabilities with a full-size link', () => {
@@ -59,7 +58,7 @@ describe('SayType launch page', () => {
     const html = renderToStaticMarkup(<App preview="stage" />)
     expect(html).toContain('data-layout="stage"')
     expect(html).toContain('Local transcription.')
-    expect(html).toContain('src="/saytype-stage-wave.webp"')
+    expect(html).toContain('src="/saytype-home-illustration.webp"')
     expect(html).toContain('No subscription.')
     expect(html).toContain('Layout preview')
     expect(html).toContain('href="?preview=editorial#top"')
@@ -101,7 +100,7 @@ describe('SayType launch page', () => {
   it('leads with local ownership rather than cloud engine selection', () => {
     const html = renderToStaticMarkup(<App />)
 
-    expect(html).toContain('Your words stay on your Mac.')
+    expect(html).toContain('Your words stay on your device.')
     expect(html).toContain('In local mode')
     expect(html).toContain('Works offline')
     expect(html).toContain('No subscription or word limits')
@@ -125,7 +124,7 @@ describe('SayType launch page', () => {
     expect(html).toContain('macOS primary')
     expect(html).toContain('Apple Silicon recommended for local dictation')
     expect(html).toContain('~1 GB download for Qwen3-ASR 0.6B')
-    expect(html).toContain('Microphone and Accessibility permissions required')
+    expect(html).toContain('Microphone required · Accessibility permission on macOS')
   })
 })
 
@@ -135,7 +134,7 @@ describe('localized launch page', () => {
 
   it('translates every section and navigation into Chinese', () => {
     const html = renderToStaticMarkup(<App locale="zh" preview={null} />)
-    for (const text of ['跳到正文', '按住，说话，松开。', '随时待命，不打扰工作。', '你的话，留在你的 Mac。', '用声音输入，无需云端。', '产品更新', '本地转写无需账号或 API key', 'Windows 和 Linux 版本仍处于实验阶段', '查看原图']) {
+    for (const text of ['跳到正文', '按住，说话，松开。', '随时待命，不打扰工作。', '你的话，留在你的设备上。', '适配你的桌面平台。', '主要测试平台', 'Windows', 'Linux', '本地转写，无需云端。', '产品更新', '本地模式无需注册或 API key', '查看原图']) {
       expect(html).toContain(text)
     }
     expect(html).toContain('href="/zh/updates"')

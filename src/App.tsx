@@ -41,7 +41,7 @@ const downloadRequirements = [
   'macOS primary',
   'Apple Silicon recommended for local dictation',
   '~1 GB download for Qwen3-ASR 0.6B',
-  'Microphone and Accessibility permissions required',
+  'Microphone required · Accessibility permission on macOS',
 ] as const
 
 function App({ locale = 'en', preview = getPreviewLayout(typeof window === 'undefined' ? '' : window.location.search) }: { locale?: Locale; preview?: PreviewLayout | null }) {
@@ -62,6 +62,7 @@ function App({ locale = 'en', preview = getPreviewLayout(typeof window === 'unde
         <PrivacySection locale={locale} />
         <WorkflowSection locale={locale} />
         <ProductSection locale={locale} />
+        <PlatformSection locale={locale} />
         <DownloadSection locale={locale} />
       </main>
       <SiteFooter locale={locale} />
@@ -77,16 +78,14 @@ function App({ locale = 'en', preview = getPreviewLayout(typeof window === 'unde
   )
 }
 
-function HeroSection({ locale, layout }: { locale: Locale; layout: PreviewLayout }) {
+function HeroSection({ locale }: { locale: Locale; layout: PreviewLayout }) {
   const t = homeCopy(locale)
 
   return (
-    <section className="hero-section" id="top" aria-labelledby="hero-title">
-      <div className="hero-art" aria-hidden="true">
-        <img className="hero-waveform" src={layout === 'stage' ? '/saytype-stage-wave.webp' : '/saytype-waveform.png'} alt="" />
-      </div>
+    <section className="hero-section illustrated-hero" id="top" aria-labelledby="hero-title">
       <div className="hero-content">
         <div className="hero-copy">
+          <p className="hero-eyebrow">{t('Voice to text, right where you work.')}</p>
           <h1 id="hero-title">
             <span>{t('Local transcription.')}</span>
             <span>{t('No account.')}</span>
@@ -99,13 +98,33 @@ function HeroSection({ locale, layout }: { locale: Locale; layout: PreviewLayout
           </div>
           <p className="hero-tagline">{t('Optional cloud transcription · Bring your own API key.')}</p>
         </div>
-        <figure className="hero-product">
-          <a href="/saytype-settings.png" target="_blank" rel="noreferrer" aria-label={t('View full-size SayType Dictation Settings screenshot')}>
-            <img src="/saytype-settings.png" alt={t('SayType main window showing Dictation Settings and available transcription engines')} width="1152" height="768" />
-          </a>
-        </figure>
+        <div className="hero-illustration-wrap" aria-hidden="true">
+          <img className="hero-illustration" src="/saytype-home-illustration.webp" alt="" width="1536" height="1024" />
+          <span className="illustration-spark illustration-spark-one" />
+          <span className="illustration-spark illustration-spark-two" />
+        </div>
       </div>
+      <div className="hero-color-band" aria-hidden="true"><span /><span /><span /></div>
     </section>
+  )
+}
+
+function StepIllustration({ number }: { number: string }) {
+  if (number === '01') return (
+    <div className="step-illustration step-keyboard" aria-hidden="true">
+      <span className="keycap">Ctrl</span><span className="key-plus">+</span><span className="keycap keycap-shift">Shift</span>
+    </div>
+  )
+  if (number === '02') return (
+    <div className="step-illustration step-wave" aria-hidden="true">
+      <svg viewBox="0 0 260 104"><path d="M8 52h28l12-34 18 67 20-48 18 25 18-52 18 76 20-49 16 21 18-37 15 31h33" /></svg>
+      <span>{'●'.repeat(3)}</span>
+    </div>
+  )
+  return (
+    <div className="step-illustration step-text" aria-hidden="true">
+      <span className="step-text-line step-text-line-long" /><span className="step-text-line" /><span className="step-caret" />
+    </div>
   )
 }
 
@@ -124,6 +143,7 @@ function WorkflowSection({ locale }: { locale: Locale }) {
       <ol className="workflow-list reveal-target">
         {workflowSteps.map((step) => (
           <li key={step.number}>
+            <StepIllustration number={step.number} />
             <span className="step-number">{step.number}</span>
             <h3>{t(step.title)}</h3>
             <p>{t(step.detail)}</p>
@@ -146,7 +166,7 @@ function ProductSection({ locale }: { locale: Locale }) {
       <div className="product-layout">
         <div className="product-copy reveal-target">
           <h2 id="product-title">{t('Ready when you are. Invisible when you’re not.')}</h2>
-          <p>{t('In local mode, SayType turns speech into text on your Mac and inserts it at your cursor. Choose your engine once, then keep working where you are.')}</p>
+          <p>{t('In local mode, SayType turns speech into text on your computer and inserts it at your cursor. Choose your engine once, then keep working where you are.')}</p>
         </div>
         <figure className="settings-figure reveal-target" data-reveal-delay="120">
           <a href="/saytype-app-settings.png" target="_blank" rel="noreferrer" aria-label={t('View full-size SayType App Settings screenshot')}>
@@ -159,7 +179,10 @@ function ProductSection({ locale }: { locale: Locale }) {
             decoding="async"
           />
           </a>
-          <figcaption>{t('App Settings. Make yourself at home.')} <a href="/saytype-app-settings.png" target="_blank" rel="noreferrer">{t('View full size')}</a></figcaption>
+          <a className="settings-peek" href="/saytype-settings.png" target="_blank" rel="noreferrer" aria-label={t('View full-size SayType Dictation Settings screenshot')}>
+            <img src="/saytype-settings.png" alt="" width="1152" height="768" loading="lazy" decoding="async" />
+          </a>
+          <figcaption>{t('Real settings. Ready for your workflow.')} <a href="/saytype-app-settings.png" target="_blank" rel="noreferrer">{t('View full size')}</a></figcaption>
         </figure>
         <div className="capability-list">
           {featuredCapabilities.map((feature, index) => (
@@ -200,9 +223,9 @@ function ProductSection({ locale }: { locale: Locale }) {
 function PrivacySection({ locale }: { locale: Locale }) {
   const t = homeCopy(locale)
   const localBenefits = [
-    { title: 'Works offline', detail: 'Download a local model once, then transcribe without an internet connection.' },
-    { title: 'Local transcription. No signup.', detail: 'Download a model and transcribe locally without registering or configuring an API key. You can also use cloud transcription through Groq or OpenAI with your own API key.' },
-    { title: 'No subscription or word limits', detail: 'Local transcription needs no account or API key. No weekly allowance and no per-minute service fees.' },
+    { title: 'Works offline', detail: 'Download once. Transcribe anywhere, even offline.', mark: 'offline' },
+    { title: 'Local transcription. No signup.', detail: 'No signup or API key in local mode. Cloud is optional with your own API key.', mark: 'local' },
+    { title: 'No subscription or word limits', detail: 'No monthly bill or transcription quota with a local model.', mark: 'unlimited' },
   ] as const
 
   return (
@@ -214,13 +237,14 @@ function PrivacySection({ locale }: { locale: Locale }) {
       <div className="privacy-layout reveal-target">
         <div className="privacy-copy">
           <p className="privacy-label">{t('In local mode · on-device transcription')}</p>
-          <h2 id="privacy-title">{t('Your words stay on your Mac.')}</h2>
-          <p>{t('In local mode, audio is processed on your Mac and transcripts are saved there. Neither is uploaded for transcription. Your everyday thoughts do not need a trip to someone else’s server.')}</p>
+          <h2 id="privacy-title">{t('Your words stay on your device.')}</h2>
+          <p>{t('In local mode, audio is processed on your device and transcripts are saved there. Neither is uploaded for transcription. Your everyday thoughts stay yours.')}</p>
         </div>
         <div className="engine-panel">
           <div className="engine-list" aria-label={t('Benefits of local transcription')}>
             {localBenefits.map((benefit) => (
-              <article key={t(benefit.title)}>
+              <article key={t(benefit.title)} className={`benefit-card benefit-${benefit.mark}`}>
+                <span className="benefit-mark" aria-hidden="true">{benefit.mark === 'offline' ? '↯' : benefit.mark === 'local' ? '⌂' : '∞'}</span>
                 <div>
                   <h3>{t(benefit.title)}</h3>
                 </div>
@@ -230,7 +254,37 @@ function PrivacySection({ locale }: { locale: Locale }) {
           </div>
         </div>
       </div>
-      <p className="platform-note">{t('macOS is the primary tested path. Windows and Linux builds remain experimental.')}</p>
+      <div className="privacy-bottomline"><span>{t('Private by default')}</span><span>{t('Offline when you need it')}</span><span>{t('Cloud is always optional')}</span></div>
+    </section>
+  )
+}
+
+function PlatformSection({ locale }: { locale: Locale }) {
+  const t = homeCopy(locale)
+  const platforms = [
+    { id: 'macos', name: 'macOS', status: 'Primary tested platform', icon: 'apple' },
+    { id: 'windows', name: 'Windows', status: 'Experimental', icon: 'windows' },
+    { id: 'linux', name: 'Linux', status: 'Experimental', icon: 'linux' },
+  ] as const
+
+  return (
+    <section className="platform-section" id="platforms" aria-labelledby="platform-title">
+      <div className="platform-heading">
+        <p className="platform-kicker">{t('Made for desktop')}</p>
+        <h2 id="platform-title">{t('Available on your platform.')}</h2>
+        <p>{t('One local-first idea. Support varies by platform.')}</p>
+      </div>
+      <ul className="platform-grid">
+        {platforms.map((platform) => (
+          <li className={`platform-card platform-${platform.id}`} key={platform.id}>
+            <span className="platform-glyph" aria-hidden="true">
+              {platform.icon === 'apple' ? <svg viewBox="0 0 48 48"><path d="M33 25c0-5 4-7.5 4.2-7.7-2.3-3.4-5.9-3.9-7.2-4-3-.3-5.8 1.8-7.3 1.8-1.6 0-4-1.7-6.6-1.6-3.4.1-6.5 2-8.2 5-3.5 6-.9 14.8 2.5 19.7 1.6 2.4 3.5 5 6.1 4.9 2.4-.1 3.3-1.6 6.3-1.6s3.8 1.6 6.4 1.5c2.7-.1 4.4-2.4 5.9-4.8 1.9-2.8 2.6-5.6 2.6-5.7-.1 0-4.7-1.8-4.7-7.5ZM28.2 10.2c1.3-1.6 2.2-3.9 1.9-6.2-1.9.1-4.3 1.3-5.6 2.9-1.2 1.4-2.3 3.8-2 6 2.1.2 4.3-1.1 5.7-2.7Z" /></svg> : platform.icon === 'windows' ? <svg viewBox="0 0 48 48"><path d="M4 9 21 6v17H4V9Zm20-3 20-3v20H24V6ZM4 25h17v17L4 39V25Zm20 0h20v20l-20-3V25Z" /></svg> : <svg viewBox="0 0 48 48"><path d="M24 5c-8 0-13 7-13 17v8c-3 2-4 6-2 9 2 3 8 2 10-1 3 2 7 2 10 0 2 3 8 4 10 1 2-3 1-7-2-9v-8C37 12 32 5 24 5Zm-6 17a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm12 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4ZM18 29h12l-2 5h-8l-2-5Z" /></svg>}
+            </span>
+            <h3>{platform.name}</h3>
+            <span className="platform-status">{t(platform.status)}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }
@@ -242,7 +296,7 @@ function DownloadSection({ locale }: { locale: Locale }) {
       <img className="download-waveform" src="/saytype-waveform.png" alt="" aria-hidden="true" />
       <div className="download-copy reveal-target">
         <p>{t('Offline dictation. No account. No subscription.')}</p>
-        <h2 id="download-title">{t('Your voice. No cloud required.')}</h2>
+        <h2 id="download-title">{t('Local transcription. No cloud needed.')}</h2>
         <ul className="download-requirements" aria-label={t('Download requirements')}>
           {downloadRequirements.map((requirement) => (
             <li key={t(requirement)}>{t(requirement)}</li>
