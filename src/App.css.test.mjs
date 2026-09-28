@@ -52,6 +52,13 @@ describe('product presentation and motion', () => {
     expect(css).not.toMatch(/\.workflow-list li:last-child\s*\{[^}]*display:\s*block/)
   })
 
+  it('stacks the product section after the illustrated desktop overrides', () => {
+    const responsive = css.slice(css.lastIndexOf('@media (max-width: 900px) {'))
+    expect(responsive).toContain('.product-layout, .product-copy { grid-template-columns: minmax(0, 1fr); }')
+    expect(responsive).toContain('.settings-figure, .capability-list { grid-column: 1; grid-row: auto; }')
+    expect(responsive).toContain('.settings-figure > .settings-peek { display: none; }')
+  })
+
   it('focuses the mobile crop on the woman and her laptop', () => {
     const mobileStyles = css.slice(css.lastIndexOf('@media (max-width: 600px) {'))
     const mobileImage = mobileStyles.match(/\.hero-illustration\s*\{([^}]+)\}/)?.[1] ?? ''

@@ -441,6 +441,8 @@
   .site-shell[lang="zh-CN"] .illustrated-hero .hero-copy h1 { font-size: clamp(3.25rem, 7vw, 5.1rem); }
   .hero-illustration { width: 100%; }
   .hero-product-peek { display: none; }
+  .product-layout, .product-copy { grid-template-columns: minmax(0, 1fr); }
+  .settings-figure, .capability-list { grid-column: 1; grid-row: auto; }
   .privacy-layout { grid-template-columns: 1fr; }
   .privacy-copy { min-height: 300px; }
   .engine-list article, .engine-list article:first-child { min-height: 235px; }
@@ -503,9 +505,11 @@
   .step-text-line { height: 7px; }
   .step-caret { top: 28px; height: 12px; }
   .product-section { padding-block: 68px; }
-  .product-copy { grid-template-columns: 1fr; }
-  .settings-figure { grid-column: auto; grid-row: auto; margin-top: 8px; padding-right: 0; }
-  .settings-peek { left: -7px; bottom: 51px; width: 47%; border-width: 4px !important; }
+  .product-layout { gap: 28px; }
+  .product-copy { grid-template-columns: 1fr; gap: 20px; }
+  .settings-figure { grid-column: auto; grid-row: auto; margin-top: 8px; padding: 0; }
+  .settings-figure > .settings-peek { display: none; }
+  .settings-figure figcaption { padding-left: 0; }
   .capability-list { grid-column: auto; grid-row: auto; grid-template-columns: 1fr; }
   .platform-section { padding-block: 75px; }
   .platform-heading h2 { font-size: 2.5rem; }
