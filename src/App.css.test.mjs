@@ -30,4 +30,33 @@ describe('product presentation and motion', () => {
     expect(css).toContain('--hero-enter-distance: 0px')
   })
 
+  it('uses the hero illustration as a full-bleed scene rather than a side thumbnail', () => {
+    const wrap = css.match(/\.hero-illustration-wrap\s*\{([^}]+)\}/)?.[1] ?? ''
+    const image = css.match(/\.hero-illustration\s*\{([^}]+)\}/)?.[1] ?? ''
+    expect(wrap).toContain('top: 70px')
+    expect(wrap).toContain('width: 100%')
+    expect(image).toContain('width: max(100%, 1100px)')
+    expect(image).toContain('height: auto')
+    expect(image).not.toContain('object-fit: cover')
+  })
+
+  it('floats the real product screen over the full-scene hero', () => {
+    const peek = css.match(/\.hero-product-peek\s*\{([^}]+)\}/)?.[1] ?? ''
+    expect(peek).toContain('position: absolute')
+    expect(peek).toContain('top: clamp(440px, 35vw, 600px)')
+    expect(peek).toContain('left: auto')
+    expect(peek).toContain('width: min(48vw, 680px)')
+  })
+
+  it('does not override the last mobile workflow row with a stronger desktop selector', () => {
+    expect(css).not.toMatch(/\.workflow-list li:last-child\s*\{[^}]*display:\s*block/)
+  })
+
+  it('focuses the mobile crop on the woman and her laptop', () => {
+    const mobileStyles = css.slice(css.lastIndexOf('@media (max-width: 600px) {'))
+    const mobileImage = mobileStyles.match(/\.hero-illustration\s*\{([^}]+)\}/)?.[1] ?? ''
+    expect(mobileImage).toContain('object-fit: cover')
+    expect(mobileImage).toContain('object-position: 75% center')
+  })
+
 })

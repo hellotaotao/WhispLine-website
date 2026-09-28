@@ -29,12 +29,13 @@ describe('SayType launch page', () => {
     expect(html).toContain('src="/saytype-settings.png"')
   })
 
-  it('uses the standalone illustration as the hero visual', () => {
+  it('uses full-scene artwork with product detail in the hero', () => {
     const html = renderToStaticMarkup(<App />)
     const hero = html.match(/<section class="hero-section illustrated-hero"[\s\S]*?<\/section>/)?.[0] ?? ''
-    expect(hero).toContain('src="/saytype-home-illustration.webp"')
-    expect(hero).toContain('width="1536" height="1024"')
-    expect(hero).not.toContain('saytype-settings.png')
+    expect(hero).toContain('src="/saytype-home-hero.webp"')
+    expect(hero).toContain('width="1904" height="826"')
+    expect(hero).toContain('class="hero-product-peek"')
+    expect(hero).toContain('src="/saytype-settings.png"')
   })
 
   it('shows real App Settings before capabilities with a full-size link', () => {
@@ -58,7 +59,7 @@ describe('SayType launch page', () => {
     const html = renderToStaticMarkup(<App preview="stage" />)
     expect(html).toContain('data-layout="stage"')
     expect(html).toContain('Local transcription.')
-    expect(html).toContain('src="/saytype-home-illustration.webp"')
+    expect(html).toContain('src="/saytype-home-hero.webp"')
     expect(html).toContain('No subscription.')
     expect(html).toContain('Layout preview')
     expect(html).toContain('href="?preview=editorial#top"')

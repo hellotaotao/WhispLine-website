@@ -99,10 +99,18 @@ function HeroSection({ locale }: { locale: Locale; layout: PreviewLayout }) {
           <p className="hero-tagline">{t('Optional cloud transcription · Bring your own API key.')}</p>
         </div>
         <div className="hero-illustration-wrap" aria-hidden="true">
-          <img className="hero-illustration" src="/saytype-home-illustration.webp" alt="" width="1536" height="1024" />
-          <span className="illustration-spark illustration-spark-one" />
-          <span className="illustration-spark illustration-spark-two" />
+          <img className="hero-illustration" src="/saytype-home-hero.webp" alt="" width="1904" height="826" />
         </div>
+        <figure className="hero-product-peek">
+          <a href="/saytype-settings.png" target="_blank" rel="noreferrer" aria-label={t('View full-size SayType Dictation Settings screenshot')}>
+            <img
+              src="/saytype-settings.png"
+              alt={t('SayType main window showing Dictation Settings and available transcription engines')}
+              width="1152"
+              height="768"
+            />
+          </a>
+        </figure>
       </div>
       <div className="hero-color-band" aria-hidden="true"><span /><span /><span /></div>
     </section>
