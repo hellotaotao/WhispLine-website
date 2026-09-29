@@ -1,5 +1,13 @@
 [
   {
+    "version": "v1.19.0",
+    "publishedAt": "2026-09-29T04:21:11Z",
+    "updatedAt": "2026-09-29T04:21:11Z",
+    "url": "https://github.com/hellotaotao/saytype/releases/tag/v1.19.0",
+    "body": "## What's new\n\n- Model downloads (Qwen 0.6B and 1.7B) now try Hugging Face first, since it's much faster than ModelScope outside mainland China. On machines set to a mainland China time zone (checked locally, nothing sent anywhere), ModelScope is tried first instead, since Hugging Face isn't reachable there.\n\n## Improvements\n\n- Downloads now recover automatically from a stuck or very slow source: if a source stays silent for 20 seconds, or averages under 200 KB/s over 15 seconds while another source is still available, the download switches sources and resumes instead of hanging or crawling forever.\n- The recording prompt no longer clips the mic icon or waveform when a hint is long (e.g. the locked-recording instruction). The waveform shrinks first, then the hint text wraps onto up to two lines, breaking only at natural word/punctuation boundaries so shortcut labels like \"Ctrl + Shift\" stay together.\n\n## Fixes\n\n- None user-facing beyond the above; the remaining changes in this release are diagnostic logging improvements (for troubleshooting dropped/lost recordings on wireless keyboards) that don't change app behavior, plus internal documentation updates.\n\n## 中文\n\n## 新增功能\n\n- 模型下载（千问 0.6B 与 1.7B）现在优先尝试 Hugging Face，在中国大陆以外该源比 ModelScope 快很多。系统时区设置为中国大陆（仅在本机判断，不会发送到任何地方）时，则优先尝试 ModelScope，因为当地无法访问 Hugging Face。\n\n## 改进\n\n- 下载过程现在能自动从卡住或过慢的源中恢复：如果某个源 20 秒内无响应，或在还有其他可用源的情况下 15 秒内平均速度低于 200 KB/s，会自动切换到下一个源并继续下载，而不是无限卡住或龟速进行。\n- 录音提示框在提示语较长时（例如免按住录音的操作说明）不再裁切麦克风图标或波形。波形会先收窄，随后提示文字最多换行为两行，并且只在词语/标点处换行，确保\"Ctrl + Shift\"这样的快捷键标签不会被拆开。\n\n## 修复\n\n- 除上述内容外没有其他面向用户的修复；本次发布中其余改动是诊断日志方面的改进（用于排查无线键盘导致录音异常中断的问题），不影响应用行为，另有内部文档更新。\n\n## Download / 下载\n\nPick the one installer for your platform:\n- **macOS** — the `.dmg`\n- **Windows** — the `_x64-setup.exe` (or `.msi`)\n- **Linux** — the `.AppImage` (portable), `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)\n\nThe remaining files (`*.sig`, `latest.json`, `*.app.tar.gz`) are used by the built-in auto-updater — you don't need to download them.\n\n（各平台任选一个安装：macOS 下 `.dmg`，Windows 下 `_x64-setup.exe` 或 `.msi`，Linux 下 `.AppImage`/`.deb`/`.rpm`。带 `.sig`、`latest.json`、`*.app.tar.gz` 的是自动更新用的，无需下载。）\n",
+    "notesStatus": "available"
+  },
+  {
     "version": "v1.18.1",
     "publishedAt": "2026-09-28T11:22:46Z",
     "updatedAt": "2026-09-28T11:22:46Z",
